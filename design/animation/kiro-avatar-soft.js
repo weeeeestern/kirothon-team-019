@@ -396,6 +396,25 @@
 
   let _uid = 0;
 
+  // Custom artwork can occupy the same space as a hat or a handheld prop.
+  const CUSTOM_SLOTS = { raincoat: "head", bikehelmet: "head", umbrella: "hand", placard: "hand" };
+
+  function appearance(situation, fit, expr) {
+    const slots = new Set((situation?.custom || []).map(name => CUSTOM_SLOTS[name]).filter(Boolean));
+    const hasHat = situation && situation.accessory !== "none";
+    const hasProp = situation && situation.prop !== "none";
+    if (hasHat) slots.add("head");
+    if (hasProp) slots.add("hand");
+    const fitCustom = (fit?.custom || []).filter(name => !slots.has(CUSTOM_SLOTS[name]));
+    const custom = [...new Set([...fitCustom, ...(situation?.custom || []), ...(expr?.custom || [])])];
+    return {
+      accessory: hasHat ? situation.accessory : (!slots.has("head") && fit?.accessory) || "none",
+      prop: hasProp ? situation.prop : (!slots.has("hand") && fit?.prop) || "none",
+      // Paint clothing before face accessories, regardless of which layer supplied it.
+      custom: custom.includes("raincoat") ? ["raincoat", ...custom.filter(name => name !== "raincoat")] : custom,
+    };
+  }
+
   function lighten(hex, amt) {
     if (!hex) return "#C4A6FF";
     const n = hex.replace("#", "");
@@ -411,15 +430,20 @@
     const sit = SITUATIONS[o.state] || SITUATIONS.ordinary;
     const fit = o.outfit && OUTFITS[o.outfit] ? OUTFITS[o.outfit] : null;
     const base = expr || sit;
-    const eyes = o.eyes || (fit && fit.eyes) || (fit ? "canon" : base.eyes);
-    const brows = o.brows || (fit ? "none" : base.brows || "none");
-    const mouth = o.mouth || (fit && fit.mouth) || (fit ? "none" : base.mouth);
-    const accessory = o.accessory || (fit ? fit.accessory : (expr ? "none" : sit.accessory));
-    const propName = o.prop || (fit ? fit.prop : (expr ? "none" : sit.prop));
-    const blush = o.blush != null ? o.blush : (fit ? false : !!base.blush);
-    const custom = o.custom || (fit ? fit.custom : base.custom || []);
-    const tile = o.tile || base.tile || sit.tile;
-    const tileSoft = o.tileSoft || base.tileSoft || lighten(tile, 36);
+    const activeSituation = sit !== SITUATIONS.ordinary ? sit : null;
+    // An alert keeps its equipment and color even during a celebration or sleep.
+    // Wardrobe previews still show only the chosen outfit on an ordinary day.
+    const look = appearance(activeSituation || (!fit && !expr ? sit : null), fit, expr);
+    const face = expr || activeSituation;
+    const eyes = o.eyes || face?.eyes || fit?.eyes || (fit ? "canon" : base.eyes);
+    const brows = o.brows || face?.brows || (fit ? "none" : base.brows || "none");
+    const mouth = o.mouth || face?.mouth || fit?.mouth || (fit ? "none" : base.mouth);
+    const accessory = o.accessory || look.accessory;
+    const propName = o.prop || look.prop;
+    const blush = o.blush != null ? o.blush : (face ? !!face.blush : !fit && !!base.blush);
+    const custom = o.custom || look.custom;
+    const tile = o.tile || activeSituation?.tile || base.tile || sit.tile;
+    const tileSoft = o.tileSoft || activeSituation?.tileSoft || base.tileSoft || lighten(tile, 36);
     const motion = o.motion || "idle";
     const showTile = o.showTile !== false;
     const rounded = o.rounded !== false;
