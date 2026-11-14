@@ -9,7 +9,9 @@ inclusion: always
 ```
 .kiro/
   specs/            기능별 requirements, design, tasks
-  steering/         product, tech, structure, design-system, infra
+  steering/         product, tech, structure (always), design-system, infra (fileMatch), deploy-checklist (manual)
+  hooks/, scripts/  저장 후 점검, PreToolUse 차단 훅과 스크립트
+  evidence/         훅 차단 실행 기록
   agents/           data, transit, docs, lead 역할 설정
 api/                Vercel API 핸들러
 server/             서버 전용 외부 API 중계

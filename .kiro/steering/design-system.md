@@ -1,7 +1,6 @@
 ---
-inclusion: auto
-name: design-system
-description: 평소 앱의 UI 화면, 컴포넌트, 스타일, 테마, 키로 캐릭터를 만들거나 고칠 때 쓰는 Ant Design 모바일(antd-mobile) 기반 디자인 시스템 규칙
+inclusion: fileMatch
+fileMatchPattern: ["src/pages/**", "src/components/**", "src/theme/**", "src/App.tsx", "design/**"]
 ---
 
 # 디자인 시스템 규칙

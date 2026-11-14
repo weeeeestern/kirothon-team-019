@@ -12,7 +12,9 @@
   "resources": [
     "file://.kiro/steering/product.md",
     "file://.kiro/steering/tech.md",
-    "file://.kiro/steering/structure.md"
+    "file://.kiro/steering/structure.md",
+    "file://.kiro/steering/infra.md",
+    "file://.kiro/steering/deploy-checklist.md"
   ],
   "permissions": {
     "rules": [

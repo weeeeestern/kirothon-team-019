@@ -1,0 +1,3 @@
+2026-11-14T08:23:23Z	source=manual	result=blocked	rule=force-push	tool=execute_bash
+2026-11-14T08:23:23Z	source=manual	result=blocked	rule=secret-file-add	tool=execute_bash
+2026-11-14T08:23:23Z	source=manual	result=blocked	rule=secret-in-tool-input	tool=fs_write

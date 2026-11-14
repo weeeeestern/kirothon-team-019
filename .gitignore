@@ -21,3 +21,4 @@ out/
 # 기타
 .DS_Store
 *.log
+!.kiro/evidence/hook-events.log
