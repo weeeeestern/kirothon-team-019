@@ -9,10 +9,12 @@
 | 기획 | Kiro CLI 대화 | 초기 기획을 PRD와 기능명세서로 구체화 | `docs/PLANNING.md`, `docs/PRD.md`, `docs/기능명세서.xlsx` |
 | 설계 | Specs | 엔진·화면·제보와 포인트·데이터와 평가를 요구사항→설계→작업으로 분리, 작업에 요구사항 번호 연결 | `.kiro/specs/`의 4개 스펙 |
 | 규칙 | Steering | 제품·기술·구조·인프라의 always 규칙, 디자인의 auto 규칙 및 파일 참조 | `.kiro/steering/`의 5개 문서 |
-| 점검 | Hooks | 스펙 동기화와 비밀정보 확인을 요청하는 PostFileSave 프롬프트 | `.kiro/hooks/`의 2개 설정 |
+| 점검 | Hooks (PostFileSave) | 스펙 동기화와 비밀정보 확인을 요청하는 저장 후 프롬프트 | `.kiro/hooks/spec-sync-on-save.json`, `.kiro/hooks/secret-check-on-save.json` |
+| 차단 | Hooks (PreToolUse, command) | Kiro 도구 호출 직전에 스크립트를 실행해 종료 코드 2로 막음. 대상은 force push(`+브랜치` 포함), `.env`·`.pem`·`.key`의 `git add`, 도구 입력의 API 키와 DB 접속 비밀번호, 비밀 값이 스테이징된 `git commit`. 값은 출력하지 않고 파일 이름만 알림 | `.kiro/hooks/guard-pretool.json`, `.kiro/scripts/guard-pretool.sh` |
+| 검증 | 서브에이전트 코드 리뷰 + 실제 실행 시험 | PR #3(차단 훅)을 리뷰 서브에이전트(`semantic_reviewer`)로 리뷰해 머지 차단 2건(`.env.example` 편집 오탐, `DATABASE_URL` 비밀번호 누락)과 수정 권장 항목을 찾음. 수정 후 스크립트 단위 시험 16건, 커밋 검사 3건, 임시 폴더의 실제 Kiro(`--v3`) 시험 6건으로 차단·통과를 확인하고 머지. 실행 시험에서 Kiro가 셸 명령을 `tool_input.command`로 넘긴다는 훅의 전제도 확인 | `docs/reviews/PR3_REVIEW.md`, PR #3 |
 | 역할 구성 | Custom agents | 데이터·길찾기·문서·통합 역할과 수정 범위 분리. 4개 설정을 `kiro-cli agent validate`로 검증 | `.kiro/agents/jamjam-*.json` |
 
-커스텀 에이전트의 설정 검증은 실행 성과와 다릅니다. 통합 에이전트는 설정과 프로젝트 구조를 읽은 후 사용자 요청으로 중단했으며, 그 세션에서는 구현 파일 변경이나 병렬 하위 에이전트 실행이 없었습니다. 저장 후 Hooks는 에이전트 점검 요청이며 커밋을 자동 차단하는 보안 게이트가 아닙니다. MCP와 Powers를 사용했다고 주장하지 않습니다.
+커스텀 에이전트의 설정 검증은 실행 성과와 다릅니다. 통합 에이전트는 설정과 프로젝트 구조를 읽은 후 사용자 요청으로 중단했으며, 그 세션에서는 구현 파일 변경이나 병렬 하위 에이전트 실행이 없었습니다. 저장 후 Hooks는 에이전트 점검 요청이고, 자동 차단은 PreToolUse 훅이 맡습니다. 이 훅은 Kiro의 도구 호출만 막으며, 사람이 터미널에서 직접 실행하는 git 명령은 막지 못합니다. `git commit -am`, `git add -A`, `-uf` 같은 결합 옵션은 아직 우회할 수 있습니다(`docs/reviews/PR3_REVIEW.md`). MCP와 Powers를 사용했다고 주장하지 않습니다.
 
 ## 구현 기록
 
