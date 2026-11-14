@@ -4,8 +4,10 @@
 
 서울 대중교통 이용자가 다니는 길과 출발 시각을 등록하면, 평소와 얼마나 다른지와 내 이동에 미치는 영향을 함께 살펴봅니다. 알림이 없는 날에는 키로와 오늘 평범도로 상태를 보여주고, 필요한 날에는 변화·비교·행동 제안을 한 번에 제공합니다.
 
-**Demo:** https://kirothon-team-019.vercel.app/  
-**발표 자료:** [PRESENTATION.pdf](PRESENTATION.pdf)  
+**Demo:** https://kirothon-team-019.vercel.app/
+
+**발표 자료:** [PRESENTATION.pdf](PRESENTATION.pdf)
+
 **개발 기록:** [BUILD_REPORT.md](BUILD_REPORT.md)
 
 > 배포 주소는 2026-11-14 비로그인 HTTP 200 응답과 앱 HTML을 확인했습니다. 공개 주소의 현재 코드와 로컬 최신 작업은 다를 수 있습니다. 최신 구현의 검증 범위와 외부 설정 상태는 [개발 기록](BUILD_REPORT.md)을 따릅니다.
