@@ -19,8 +19,7 @@
     "file://.kiro/specs/app-ui-kiro/tasks.md",
     "file://.kiro/steering/infra.md",
     "file://docs/DECISIONS.md",
-    "file://.kiro/steering/decisions.md",
-    "file://.kiro/steering/deploy-checklist.md"
+    "file://.kiro/steering/decisions.md"
   ],
   "permissions": {
     "rules": [

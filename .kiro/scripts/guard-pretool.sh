@@ -6,23 +6,18 @@ set -u
 
 INPUT="$(cat)"
 
-# 차단 기록: .kiro/evidence/hook-events.log에 시각·출처·규칙 ID·도구 이름만 남긴다.
-# 도구 입력과 차단 사유 문장은 기록하지 않는다(비밀 값이 섞일 수 있음).
-# 출처는 Kiro가 실행하면 kiro, 사람이 시험할 때는 HOOK_SOURCE=manual로 구분한다.
-LOG_FILE="$(cd "$(dirname "$0")/.." && pwd)/evidence/hook-events.log"
-TOOL="$(printf '%s' "$INPUT" | grep -Eo '"tool_name"[[:space:]]*:[[:space:]]*"[A-Za-z0-9_.:@/-]{1,64}"' | head -1 | sed -E 's/.*"([^"]*)"$/\1/' || true)"
+LOG_FILE=".kiro/evidence/hook-events.log"
+mkdir -p ".kiro/evidence"
 
 log_event() {
-  mkdir -p "$(dirname "$LOG_FILE")" 2>/dev/null || return 0
-  printf '%s\tsource=%s\tresult=%s\trule=%s\ttool=%s\n' \
-    "$(date -u +%Y-%m-%dT%H:%M:%SZ)" "${HOOK_SOURCE:-kiro}" "$1" "$2" "${TOOL:-unknown}" \
-    >> "$LOG_FILE" 2>/dev/null || true
+  local reason="$1"
+  local ts; ts="$(date -u +%Y-%m-%dT%H:%M:%SZ 2>/dev/null || date +%Y-%m-%dT%H:%M:%SZ)"
+  printf '%s action=blocked reason=%s source=kiro\n' "$ts" "$reason" >> "$LOG_FILE" 2>/dev/null || true
 }
 
-# block <규칙 ID> <사유>
 block() {
-  log_event blocked "$1"
-  printf 'BLOCKED[%s]: %s\n' "$1" "$2" >&2
+  log_event "$(printf '%s' "$1" | head -c 80 | tr ' ' '_')"
+  printf 'BLOCKED: %s\n' "$1" >&2
   exit 2
 }
 
@@ -37,20 +32,20 @@ PLACEHOLDER_ERE='your|example|placeholder|changeme|xxxx|<.*>'
 if [ -n "$CMD" ]; then
   # 1) 강제 push 금지
   if printf '%s' "$CMD" | grep -Eq 'git[[:space:]]+push.*([[:space:]]--force|--force-with-lease|[[:space:]]-f([[:space:]"]|$)|[[:space:]]\+[A-Za-z0-9_./-])'; then
-    block force-push "force push는 금지입니다. 일반 push는 사람이 합니다."
+    block "force push는 금지입니다. 일반 push는 사람이 합니다."
   fi
 
   # 2) .env, 인증서, 키 파일 스테이징 금지 (.env.example은 허용)
   ADD_TARGETS="$(printf '%s' "$CMD" | grep -Eo 'git[[:space:]]+add.*' | grep -Eo '[^[:space:]]*(\.env[A-Za-z0-9._-]*|\.pem|\.key)([[:space:]"]|$)' | grep -v 'example' || true)"
   if [ -n "$ADD_TARGETS" ]; then
-    block secret-file-add "비밀 파일(.env, .pem, .key)을 git add 하려고 했습니다. 이 레포는 Public입니다. .env.example에는 빈 값만 둡니다."
+    block "비밀 파일(.env, .pem, .key)을 git add 하려고 했습니다. 이 레포는 Public입니다. .env.example에는 빈 값만 둡니다."
   fi
 fi
 
 # 3) 도구 입력(파일 쓰기, 셸 명령 모두)에 비밀 값이 직접 들어 있으면 차단
 HIT="$(printf '%s' "$INPUT" | grep -Eoi "$SECRET_ERE" | grep -Evi "$PLACEHOLDER_ERE" | head -1 || true)"
 if [ -n "$HIT" ]; then
-  block secret-in-tool-input "비밀 값으로 보이는 문자열이 도구 입력에 있습니다(값은 출력하지 않음). process.env 또는 VITE_ 환경 변수에서 읽게 바꾸세요."
+  block "비밀 값으로 보이는 문자열이 도구 입력에 있습니다(값은 출력하지 않음). process.env 또는 VITE_ 환경 변수에서 읽게 바꾸세요."
 fi
 
 # 4) 커밋 직전: 스테이징된 변경에 비밀 값이 있으면 파일 이름만 알리고 차단
@@ -58,7 +53,7 @@ if printf '%s' "$CMD" | grep -Eq 'git[[:space:]]+commit'; then
   if command -v git >/dev/null 2>&1 && git rev-parse --git-dir >/dev/null 2>&1; then
     FILES="$(git diff --cached --name-only -G"$SECRET_ERE" 2>/dev/null | head -5 | tr '\n' ' ')"
     if [ -n "$FILES" ]; then
-      block secret-in-staged-commit "스테이징된 파일에 비밀 값으로 보이는 문자열이 있습니다: ${FILES}"
+      block "스테이징된 파일에 비밀 값으로 보이는 문자열이 있습니다: ${FILES}"
     fi
   fi
 fi

@@ -9,10 +9,9 @@ inclusion: always
 ```
 .kiro/
   specs/            기능별 requirements, design, tasks
-  steering/         제품·기술·구조·결정(always), 디자인·인프라·프론트엔드(fileMatch), 배포 점검(manual)
+  steering/         제품·기술·구조·디자인·인프라·결정·프론트엔드 규칙
   agents/           lead, engine-dev, ui-dev, data, transit, docs, qa, security
   hooks/, scripts/  도구 보호와 압축 전후 상태 복귀
-  evidence/         훅 차단 실행 기록
   settings/         워크스페이스 CLI 설정
   compaction/       로컬 Git 메타데이터 스냅샷 (Git 제외)
 api/                Vercel API 핸들러

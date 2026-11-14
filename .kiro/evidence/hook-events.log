@@ -1,3 +1,1 @@
-2026-11-14T08:23:23Z	source=manual	result=blocked	rule=force-push	tool=execute_bash
-2026-11-14T08:23:23Z	source=manual	result=blocked	rule=secret-file-add	tool=execute_bash
-2026-11-14T08:23:23Z	source=manual	result=blocked	rule=secret-in-tool-input	tool=fs_write
+2026-11-14T08:51:30Z action=blocked reason=비밀_파일(.env,_.pem,_.key)을_git_add_하려고_했습니다._이_레포는 source=kiro
