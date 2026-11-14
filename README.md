@@ -121,10 +121,10 @@ npm run evaluate     # 샘플 상황 24개 평가 재현
 
 | 이름 | 역할 |
 |---|---|
-| 박도형 | 기획, UI 디자인 시스템 |
-| 박진우 | 기획, 프론트엔드·알림 엔진·API 연동 개발, 배포 |
-| 박은서 | 기획, 키로 캐릭터 디자인·애니메이션 |
-| 김미주 | 기획, 문서(PRD·기능명세·개발 기록), Kiro 설정(steering·hooks) |
+| 박도형 | 기획, UI 디자인 시스템(Ant Design 기반), 상황 의상 우선 표시 수정, Kiro 서브에이전트 구조와 Supabase 제보·포인트 백엔드(PR 검토 중) |
+| 박진우 | 기획, 이상 판정 엔진과 React 앱 MVP, 카카오맵·ODsay 경로 조회, 공공데이터 기준선 연동, 샘플 알림·레벨업, 제보 지도 표시, 대안 경로 추천, Vercel 배포, 배포 빈 화면·코스튬 장식 버그 수정 |
+| 박은서 | 기획, 키로 캐릭터 디자인·애니메이션, Kiro 차단 훅(비밀 값·force push)과 실행 기록, steering 정리, 개발 기록 추적 표 |
+| 김미주 | 기획, 서비스 기획서·PRD·기능명세, Kiro 스펙·steering·hooks, 개발 기록·README 작성, 훅 리뷰 반영과 키로 렌더러(Safari) 버그 수정 |
 
 기여 기록: [GitHub Contributors](https://github.com/weeeeestern/kirothon-team-019/graphs/contributors)
 
