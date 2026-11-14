@@ -7,6 +7,7 @@ import { totalPoints } from '@/features/points/ledger';
 import { dayKey } from '@/engine/utils';
 import { initialStore, restoreStore, reducer, STORAGE_KEY } from './store';
 import anomaliesRaw from '@/data/synthetic/anomalies.json';
+import { DEMO_ANOMALIES, DEMO_ROUTE } from './demo';
 
 import { Ctx } from './context';
 import type { DemoMode } from './context';
@@ -29,9 +30,10 @@ export function AppState({ children }: { children: ReactNode }) {
     const demo = runDay(store.routes, sample, { threshold: store.threshold, feedbackCounts: { helpful: 0, notNeeded: 0 } }, day);
     // Reports use the actual Seoul date and expire at midnight. The demo day never extends their lifetime.
     const reported = runDay(store.routes, store.reports.flatMap(r => { const a = toAnomaly(r, now); return a ? [a] : []; }), { threshold: store.threshold, feedbackCounts: { helpful: 0, notNeeded: 0 } }, now);
-    const notices = [...demo.notices, ...reported.notices].sort((a, b) => b.impact - a.impact);
-    return { notices, ordinariness: Math.min(demo.ordinariness, reported.ordinariness), situation: notices[0]?.situation ?? 'ordinary' } as EngineResult;
-  }, [mode, store.routes, store.reports, store.threshold, day, now]);
+    const showcase = runDay(store.demoEnabled ? store.routes.filter(r => r.id === DEMO_ROUTE.id) : [], DEMO_ANOMALIES, { threshold: store.threshold, feedbackCounts: { helpful: 0, notNeeded: 0 } }, day);
+    const notices = [...demo.notices, ...reported.notices, ...showcase.notices].sort((a, b) => b.impact - a.impact);
+    return { notices, ordinariness: Math.min(demo.ordinariness, reported.ordinariness, showcase.ordinariness), situation: notices[0]?.situation ?? 'ordinary' } as EngineResult;
+  }, [mode, store.routes, store.reports, store.threshold, store.demoEnabled, day, now]);
   const lastSituation = useRef(result.situation);
   useEffect(() => {
     if (result.situation !== 'ordinary' && lastSituation.current !== result.situation) celebrate('surprise');

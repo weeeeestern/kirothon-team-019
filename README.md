@@ -6,6 +6,8 @@
 
 **Demo:** https://kirothon-team-019.vercel.app/
 
+**시연 데이터 바로 체험:** https://kirothon-team-019.vercel.app/?demo=1#kiro — 시연 알림 3개와 100 P를 추가합니다. 처음 시작하면 Lv.4와 옷장 해금을 볼 수 있고, 키로의 방에서 시연 데이터만 지울 수 있습니다. 기존 경로·포인트는 유지됩니다.
+
 **발표 자료:** [PRESENTATION.pdf](PRESENTATION.pdf)
 
 **개발 기록:** [BUILD_REPORT.md](BUILD_REPORT.md)
