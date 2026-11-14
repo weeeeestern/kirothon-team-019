@@ -1,33 +1,32 @@
+---
+inclusion: always
+---
+
 # 인프라 및 외부 API 지침
 
-## 배포: Vercel
+## 배포
 
-- 배포 플랫폼은 Vercel을 사용한다.
-- 환경변수는 Vercel 대시보드의 Environment Variables에 등록한다. `.env` 파일은 `.gitignore`에 포함시키고 커밋하지 않는다.
-- 빌드 명령, 출력 디렉토리 등 Vercel 설정은 `vercel.json` 또는 Vercel 대시보드에서 관리한다.
+- Vercel 프로젝트는 저장소 루트에서 빌드한다. 프론트 출력은 `src/dist`, 서버 핸들러는 `api/`이다.
+- `.env` 및 키는 커밋하지 않는다. Vercel 환경변수 설정은 코드 반영과 별개다.
+- 로컬 Vite 개발 서버도 동일한 `/api/` 계약을 제공한다.
 
-## 카카오맵 API
+## 카카오맵과 장소 검색
 
-- 지도 표시 및 장소 검색은 카카오맵 API를 사용한다.
-- JavaScript 키는 환경변수 `NEXT_PUBLIC_KAKAO_JS_KEY`로 관리한다. (브라우저에서 사용)
-- REST API 키는 환경변수 `NEXT_PUBLIC_KAKAO_REST_API_KEY`로 관리한다. (서버사이드 전용)
-- API 문서: https://apis.map.kakao.com
-- 지도 스크립트 로드: `//dapi.kakao.com/v2/maps/sdk.js?appkey=${NEXT_PUBLIC_KAKAO_JS_KEY}`
+- 지도 JavaScript 키는 `VITE_KAKAO_JS_KEY`를 사용한다. 이 키는 브라우저에 공개되므로 카카오 개발자 콘솔에서 허용 도메인을 제한한다.
+- `/api/map-config`는 지도 JavaScript 키만 반환할 수 있다. REST 키와 다른 서버 키는 절대 반환하지 않는다.
+- 장소 검색 REST 키는 서버 환경변수 `KAKAO_REST_API_KEY`를 사용한다.
+- 이전 로컬 환경의 `NEXT_PUBLIC_KAKAO_JS_KEY`, `NEXT_PUBLIC_KAKAO_REST_API_KEY`는 서버에서만 호환해 읽는다. `NEXT_PUBLIC_`라는 접두사가 REST 키 공개를 허용하지 않는다.
+- 공식 문서: https://apis.map.kakao.com/web/documentation/
 
-## 공공데이터포털
+## ODsay 대중교통 길찾기
 
-- API 키는 환경변수 `PUBLIC_DATA_API_KEY`로 관리한다.
-- API 포털: https://www.data.go.kr
+- `ODSAY_API_KEY`는 서버 전용이다. 사용자가 고른 좌표로 경로 후보를 조회한다.
+- 지도는 실제 노선 geometry와 정류장 연결선을 구분해 표시한다.
+- 인증·도메인·할당량 오류를 숨기지 않는다. 키를 포함한 URL을 로그에 남기지 않는다.
+- 공식 문서: https://lab.odsay.com/guide/guide?platform=web
 
-## 서울 열린데이터광장
+## 공공데이터
 
-- 일반 API 키는 환경변수 `SEOUL_DATA_API_KEY`로 관리한다.
-- 실시간 지하철 도착 현황 API 키는 환경변수 `SEOUL_SUBWAY_REALTIME_API_KEY`로 관리한다. (별도 활용사례 승인 필요)
-- API 포털: https://data.seoul.go.kr
-
-## 대중교통 API: ODsay LAB
-
-- 대중교통 경로/정보 조회는 [ODsay LAB API](https://lab.odsay.com)를 사용한다.
-- API 키는 환경변수 `ODSAY_API_KEY`로 관리한다. 코드에 직접 하드코딩하지 않는다.
-- API 키 값은 Vercel 환경변수에 등록한다.
-- API 문서: https://lab.odsay.com/application/info
+- `PUBLIC_DATA_API_KEY`, `SEOUL_DATA_API_KEY`, `SEOUL_SUBWAY_REALTIME_API_KEY`는 서버·수집 스크립트 전용이다.
+- 원본 CSV/XLSX는 변경하지 않는다. 정제본에는 출처·기간·단위·원본 해시를 남긴다.
+- API 정상 응답, 앱 연결, 실제 서비스 검증을 각각 구분한다.

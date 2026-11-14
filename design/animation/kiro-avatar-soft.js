@@ -4,8 +4,11 @@
  * gentle body shading and a ground shadow.
  */
 (function (root, factory) {
-  if (typeof module === "object" && module.exports) module.exports = factory();
-  else root.KiroAvatar = factory();
+  const renderer = factory();
+  if (typeof module === "object" && module.exports) module.exports = renderer;
+  // Vite's production bundle wraps this UMD file as CommonJS. The React
+  // adapter and standalone design previews both consume the browser global.
+  if (root) root.KiroAvatar = renderer;
 })(typeof self !== "undefined" ? self : this, function () {
   const WHITE = "#ffffff";
   const EYE_INK = "#000000"; // official face ink — do not soften the mark

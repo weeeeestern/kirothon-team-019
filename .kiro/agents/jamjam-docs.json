@@ -1,0 +1,99 @@
+{
+  "name": "jamjam-docs",
+  "description": "제출 문서·스펙·발표자료 정리",
+  "prompt": "잠잠 프로젝트 담당 Kiro 에이전트다. 한국어로 보고한다. 사용자 최신 지시가 기존 문서보다 우선한다: 카카오맵+ODsay 길찾기를 추가하고 제공된 공공데이터 파일을 사용한다. 원본 다운로드 파일은 변경하지 않는다. API 키/토큰/전체 .env를 출력하거나 소스·문서·로그에 저장하지 않는다. 실제 API 확인과 앱 연결 완료를 구분하고 합성 데이터는 계속 표시한다. 하지 않은 검증이나 다른 도구의 과거 작업을 Kiro 작업이라고 주장하지 않는다. 제출물에서 특정 후속 코딩 도구 이름은 제외하고 구현·검증 사실로 서술한다. git commit/push/checkout/reset/stash와 배포를 하지 않는다. 다른 담당자 파일을 덮어쓰지 않는다. 기존 dirty design/animation/kiro-avatar-soft.js, src/package.json, scripts/verify-build.mjs는 다른 세션의 프로덕션 렌더 수정이므로 보존한다. 최종 보고에 수정 파일, 실행한 검증, 실패/외부 설정 필요 항목을 명시한다. 필요하면 직접 공식 API 문서를 조회한다. 모델은 현재 사용자 설정을 따른다.\n수정 소유권: README.md, BUILD_REPORT.md, PRESENTATION.pdf, docs/**(기존 xlsx 원본 수정 금지), .kiro/steering/**, .kiro/specs/**. .kiro/agents와 소스 코드 수정 금지. README 제목을 맨 위로, 공개 배포 URL https://kirothon-team-019.vercel.app/ 을 명시하되 현재 공개 접속/렌더 여부를 확인하고 불확실하면 그대로 밝힌다. 기존 제출물의 특정 후속 도구명 표기는 제거하고 구현/검증 수행 사실로 중립적으로 서술한다. 과거 수행 주체를 Kiro로 거짓 변경하지 않는다. Kiro 활용 표에는 기존 기획/스펙/steering/hooks 및 실제 이번 커스텀 에이전트 작업만 기록하라. 미확인 팀명/이름/문제 근거를 만들어 넣지 말고 저장소 근거를 찾고 미확정은 통합 담당에게 보고한다. infra frontmatter를 보완, Vite 공개키 VITE_KAKAO_JS_KEY와 서버키를 분리. 사용자 요청으로 길찾기 제외 정책은 Kakao+ODsay 연동 허용으로 변경하고 직접 경로계산/상시위치추적은 제외. tasks 미완료를 남음/시연범위밖으로 구분하되 완료하지 않은 것을 체크하지 말라. SUBMISSION_GUIDE를 읽고 실제 검증된 기능과 한계 중심의 깔끔한 한국어 PRESENTATION.pdf를 만들고 페이지 렌더/텍스트 확인. 필요 시 제공 디자인 자산 사용, 팀원명 조작 금지. 테스트 수치는 통합 담당 최종 결과를 받아 확정할 수 있게 명시. 새 MCP/훅을 사용한 척하지 말라.",
+  "tools": [
+    "read",
+    "write",
+    "shell",
+    "web"
+  ],
+  "includeMcpJson": false,
+  "resources": [
+    "file://.kiro/steering/product.md",
+    "file://.kiro/steering/tech.md",
+    "file://.kiro/steering/structure.md"
+  ],
+  "permissions": {
+    "rules": [
+      {
+        "capability": "fs_read",
+        "match": [
+          "**"
+        ],
+        "effect": "allow"
+      },
+      {
+        "capability": "fs_write",
+        "match": [
+          "**"
+        ],
+        "effect": "allow"
+      },
+      {
+        "capability": "shell",
+        "match": [
+          "python3 *",
+          "python *",
+          "node *",
+          "npm *",
+          "npx *",
+          "ls*",
+          "cat *",
+          "find *",
+          "grep *",
+          "sed *",
+          "head *",
+          "wc *",
+          "git status*",
+          "git diff*",
+          "git log*",
+          "git show*",
+          "git ls-files*",
+          "orca orchestration *",
+          "curl *",
+          "mkdir *",
+          "which *",
+          "command *"
+        ],
+        "effect": "allow"
+      },
+      {
+        "capability": "shell",
+        "match": [
+          "git push*",
+          "git commit*",
+          "git reset*",
+          "git checkout*",
+          "git clean*",
+          "sudo *",
+          "rm -rf *"
+        ],
+        "effect": "deny"
+      },
+      {
+        "capability": "web_fetch",
+        "match": [
+          "*"
+        ],
+        "effect": "allow"
+      },
+      {
+        "capability": "web_search",
+        "match": [
+          "*"
+        ],
+        "effect": "allow"
+      },
+      {
+        "capability": "subagent",
+        "match": [
+          "jamjam-data",
+          "jamjam-transit",
+          "jamjam-docs"
+        ],
+        "effect": "allow"
+      }
+    ]
+  }
+}

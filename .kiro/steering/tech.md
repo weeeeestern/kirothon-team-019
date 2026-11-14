@@ -13,15 +13,15 @@ inclusion: always
 | 테스트 | `vitest`, 컴포넌트는 `@testing-library/react` |
 | 상태 저장 | React Context + `localStorage` |
 | 배포 | Vercel (링크 공유) |
-| 백엔드 | 없음 |
+| 백엔드 | Vercel Functions의 외부 API 중계, Vite 개발 서버의 동일 경로 미들웨어 |
 
 `docs/PLANNING.md`는 Tailwind를 적었지만 UI 라이브러리는 `design/DESIGN.md`를 따른다. Tailwind는 쓰지 않는다.
 
 ## 데이터 원칙
 
-- 앱은 런타임에 외부 API를 호출하지 않는다. 사전 수집한 JSON(`src/data/*.json`)만 읽는다.
+- 과거 공공데이터 기준선은 사전 정제한 JSON을 읽는다. 장소·길찾기 조회는 동일 출처 `/api/`를 통해 서버에서 외부 API를 호출한다.
 - 각 JSON에는 소스 이름과 수집 시각(`meta`)을 넣는다.
-- 소스 검증에 실패하면 합성 데이터로 대체하고 `source: 'synthetic'`을 붙인다. 샘플 데이터 모드가 기본이다.
+- 합성 시나리오는 명시적인 샘플 모드로 분리한다. 실제 조회 실패를 합성 응답으로 위장하지 않고 재시도 또는 수동 등록을 안내한다.
 - 수집 스크립트는 `scripts/collect/`에 두고 개발 시점에만 실행한다.
 
 ## 보안
@@ -41,7 +41,7 @@ inclusion: always
 ## 명령 (프로젝트 생성 후 기준)
 
 ```bash
-npm install          # 의존성 설치
+npm ci --prefix src  # 의존성 설치
 npm run dev          # 개발 서버
 npm run build        # 빌드
 npm test             # vitest (합성 시나리오 지표 단언 포함)

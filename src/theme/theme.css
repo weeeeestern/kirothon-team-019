@@ -104,3 +104,22 @@ fieldset { border: 0; padding: 0; margin: 0 0 var(--pyeongso-space-6); } legend 
 .unlock-content { text-align: center; }
 .unlock-content p { margin-top: var(--pyeongso-space-3); }
 .route-pill > span:first-child, .card h3 { overflow-wrap: anywhere; }
+.real-data-tag { display: inline-block; color: var(--pyeongso-success); border: 1px solid var(--pyeongso-border); border-radius: var(--adm-radius-s); padding: 3px 6px; font-size: 11px; white-space: nowrap; }
+.compact-field { margin: var(--pyeongso-space-4) 0; font-size: 13px; }
+.observation-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--pyeongso-space-2); }
+.observation-grid > div { display: flex; flex-direction: column; gap: var(--pyeongso-space-2); }
+.observation-grid span, .observation-grid small { font-size: 11px; color: var(--pyeongso-text-secondary); }
+.observation-grid strong { font-size: 20px; overflow-wrap: anywhere; }
+.live-conditions summary, .baseline-panel summary { min-height: 44px; padding-block: var(--pyeongso-space-3); cursor: pointer; }
+.observation-event { padding-bottom: var(--pyeongso-space-3); border-bottom: 1px solid var(--pyeongso-border); }
+.baseline-panel { background: var(--pyeongso-surface); padding: var(--pyeongso-space-3) var(--pyeongso-space-4); margin-block: var(--pyeongso-space-4); border: 1px solid var(--pyeongso-border); border-radius: var(--adm-radius-m); }
+.baseline-panel p { margin-block: var(--pyeongso-space-3); }
+.baseline-panel summary { font-size: 13px; font-weight: 600; }
+.baseline-panel h4 { margin-top: var(--pyeongso-space-4); }
+.baseline-row { display: flex; justify-content: space-between; align-items: center; gap: var(--pyeongso-space-3); padding-block: var(--pyeongso-space-3); border-bottom: 1px solid var(--pyeongso-border); }
+.baseline-row strong { font-size: 18px; }
+.baseline-row small { display: block; color: var(--pyeongso-text-secondary); font-size: 11px; font-weight: 400; }
+.baseline-row strong small { display: inline; margin-left: 3px; }
+.route-guide ol { padding-left: var(--pyeongso-space-5); margin-block: var(--pyeongso-space-4); }
+.route-guide li { padding: 0 0 var(--pyeongso-space-4) var(--pyeongso-space-2); color: var(--pyeongso-primary-text); }
+.route-guide li span { display: block; margin-top: 4px; color: var(--pyeongso-text-secondary); font-size: 13px; }

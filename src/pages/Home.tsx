@@ -8,6 +8,8 @@ import { situationColor } from '@/theme/situation';
 import { KiroAvatar } from '@/components/KiroAvatar';
 import { LevelCard } from '@/components/LevelCard';
 import { dayKey } from '@/engine/utils';
+import { LiveConditions } from '@/components/LiveConditions';
+import { RouteBaseline } from '@/components/RouteBaseline';
 
 export function Home({ navigate }: { navigate: (p: Page) => void }) {
   const { result, store, mode, setMode, now, day, unread, celebration } = useApp();
@@ -23,6 +25,9 @@ export function Home({ navigate }: { navigate: (p: Page) => void }) {
     <section className="card quiet-card" style={{ borderColor: theme.accent + '44' }}><div className="row"><span className="status-dot" style={{ background: quiet ? 'var(--pyeongso-success)' : theme.accent }} /><strong>{!hasRoutes ? '아직 살펴볼 경로가 없어요' : quiet ? '알림을 쉬고 있어요' : result.notices[0].what}</strong></div><p>{!hasRoutes ? '출발역과 도착역을 알려주면 내 길의 변화를 살펴볼게요.' : quiet ? '내 경로에 큰 변화가 없어요. 평소와 다를 때만 알려드릴게요.' : result.notices[0].action}</p>{!quiet && <Button size="small" fill="none" color="primary" onClick={() => navigate('notices')}>변화 자세히 보기 <ArrowRightOutlined /></Button>}</section>
     <div className="section-title row between"><h3>내가 다니는 길</h3><Button size="small" fill="none" color="primary" onClick={() => navigate('routes')}>경로 관리</Button></div>
     {store.routes.length ? store.routes.map(r => <button className="route-pill" key={r.id} onClick={() => navigate('routes')}><span>{r.stops[0]} → {r.stops.at(-1)}</span><span className="caption">{r.departAt} <ArrowRightOutlined /></span></button>) : <div className="card"><p>등록한 경로가 없어요.</p><Button block color="primary" onClick={() => navigate('routes')}>첫 경로 등록하기</Button></div>}
+    <section className="card route-guide"><h3>내 길을 확인하는 순서</h3><ol><li><strong>경로 찾기</strong><span>출발·도착을 고르고 이동 구간을 확인해요.</span></li><li><strong>평소와 비교</strong><span>요일·출발 시각별 실제 과거 통계를 살펴봐요.</span></li><li><strong>변화 확인</strong><span>현재 지역 관측과 샘플 알림을 구분해서 봐요.</span></li></ol><Button block color="primary" onClick={() => navigate('routes')}>지도에서 내 경로 찾기</Button></section>
+    {store.routes[0] && <RouteBaseline route={store.routes[0]} />}
+    <LiveConditions />
     {quiet && <LevelCard />}
     <details className="demo-controls"><summary>샘플 시나리오 바꾸기</summary><p className="caption">{dayKey(day)} 평일 시나리오예요. 실제 교통 상황이 아니에요.</p><Selector columns={3} value={[mode]} options={[{ label: '평범한 날', value: 'quiet' }, { label: '혼잡', value: 'congestion' }, { label: '공사', value: 'construction' }, { label: '비', value: 'rain' }, { label: '미세먼지', value: 'dust' }, { label: '마라톤', value: 'marathon' }, { label: '파업·집회', value: 'strike' }]} onChange={v => v[0] && setMode(v[0] as DemoMode)} /><p className="caption">강남 · 07:30–08:30 신호를 내 경로와 비교해요.</p></details>
     <p className="source-note">합성 데이터 기준 · 샘플 생성 {sampleGeneratedAt}<br />위치 권한 없이, 등록한 경로만 살펴봐요.</p>

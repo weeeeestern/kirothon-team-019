@@ -1,3 +1,5 @@
+import type { Place, TransitJourney } from '../features/transit/types';
+
 export type DayType = 'weekday' | 'weekend' | 'holiday' | 'afterHoliday';
 export type Situation =
   | 'ordinary'
@@ -27,6 +29,10 @@ export interface Route {
   stops: string[];
   departAt: string; // HH:mm
   days: DayType[];
+  origin?: Place;
+  destination?: Place;
+  journey?: TransitJourney;
+  fetchedAt?: string;
 }
 
 export interface Anomaly {
