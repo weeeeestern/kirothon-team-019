@@ -94,7 +94,7 @@ para(48,77,'Hooks는 점검 요청이며 자동 차단 게이트가 아닙니다
 base(8,'DEMO & NEXT','조용한 날에는 잠잠하게. 필요한 날에는 분명하게.')
 box(48,197,864,137)
 text(70,294,'공개 데모',15,PURPLE);text(70,251,'kirothon-team-019.vercel.app',27)
-text(70,218,'비로그인 HTTP 200 확인 · 최신 코드 배포와 화면 검증은 별도',13,MUTED)
+text(70,218,'공개 배포 완료 · 390px 홈·키로·현재 지역 신호 확인',13,MUTED)
 c.linkURL('https://kirothon-team-019.vercel.app/',(65,241,726,281),relative=0)
 para(48,159,'남은 운영 조건',864,18,TEXT)
 para(48,125,'카카오 서비스·허용 도메인 / ODsay 키 인증 설정\n실제 다중 사용자·예약 푸시 / 공휴일 달력 / 실제 관측 기반 효과 검증',864,15,MUTED)
