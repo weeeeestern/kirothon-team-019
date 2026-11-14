@@ -34,7 +34,7 @@ type ReportStatus = 'pending' | 'confirmed';
 interface Report {
   id: string; reporterId: string;
   situation: 'construction' | 'strike' | 'marathon' | 'congestion'; // 제보 가능 유형
-  place: string; occurredAt: string; note: string;                  // note ≤ 80자
+  place: string; occurredAt: string; note: string;                  // note ≤ 100자
   status: ReportStatus; confirmedBy: string[]; helpedBy: string[];
   createdAt: string;
 }
