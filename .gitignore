@@ -22,3 +22,6 @@ out/
 .DS_Store
 *.log
 !.kiro/evidence/hook-events.log
+
+# Kiro 압축 스냅숏 (로컬 전용)
+.kiro/compaction/

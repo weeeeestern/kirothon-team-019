@@ -29,10 +29,10 @@ export function restoreStore(raw: string | null): Store {
     if (s.demoEnabled !== undefined && typeof s.demoEnabled !== 'boolean') return initialStore();
     if (!s.feedback || Array.isArray(s.feedback) || typeof s.feedback !== 'object' || !Object.values(s.feedback).every(v => v === 'helpful' || v === 'notNeeded')) return initialStore();
     const strings = (a: unknown): a is string[] => Array.isArray(a) && a.every(x => typeof x === 'string');
-    if (!strings(s.read) || !strings(s.unlocked) || !OUTFITS.some(o => o.id === s.outfit)) return initialStore();
+    if (!strings(s.read) || !strings(s.unlocked)) return initialStore();
     if (!Array.isArray(s.ledger) || !s.ledger.every(e => e && typeof e.id === 'string' && [1, 5, 10].includes(e.amount) && typeof e.reason === 'string') || new Set(s.ledger.map(e => e.id)).size !== s.ledger.length) return initialStore();
     if (!Array.isArray(s.reports) || !s.reports.every(r => r && typeof r.id === 'string' && typeof r.author === 'string' && typeof r.place === 'string' && typeof r.note === 'string' && REPORT_TYPES.includes(r.situation) && validReportInput(r) && strings(r.confirmations) && strings(r.helpfulUsers) && Number.isFinite(Date.parse(r.createdAt)))) return initialStore();
-    return s;
+    return typeof s.outfit === 'string' && OUTFITS.some(o => o.id === s.outfit) ? s : { ...s, outfit: 'base' };
   } catch { return initialStore(); }
 }
 export function canWear(s: Store, id: string): boolean {
@@ -47,7 +47,11 @@ export type Action =
   | { type: 'report'; report: CitizenReport; now: string }
   | { type: 'confirm' | 'helpful'; id: string; user: string; routeId: string; now: string }
   | { type: 'read'; ids: string[] }
-  | { type: 'wear'; id: string };
+  | { type: 'wear'; id: string }
+  | { type: 'syncLedger'; entries: PointEntry[] }
+  | { type: 'syncRemote'; items: Array<{ routeId: string; report: RemoteReport }>; now: string };
+/** 서버 제보 한 건(remote 모드). 확인한 사용자 ID는 받지 않고 수만 받는다. */
+export interface RemoteReport { id: string; situation: CitizenReport['situation']; place: string; time: string; note: string; confirmations: number; isMine: boolean }
 export function reducer(s: Store, a: Action): Store {
   switch (a.type) {
     case 'loadDemo': {
@@ -85,6 +89,22 @@ export function reducer(s: Store, a: Action): Store {
       return { ...s, reports: s.reports.map(r => r.id === a.id ? { ...r, helpfulUsers: [...r.helpfulUsers, a.user] } : r), ledger: award(s.ledger, { id: `helpful:${a.id}:${a.user}`, amount: 5, reason: '이웃에게 도움된 제보' }) };
     }
     case 'read': return { ...s, read: [...new Set([...s.read, ...a.ids])] };
+    case 'syncLedger': {
+      // remote 모드: 서버 원장이 기준이다.
+      const entries = a.entries.reduce<PointEntry[]>((acc, e) => award(acc, e), []);
+      return { ...s, ledger: entries };
+    }
+    case 'syncRemote': {
+      let reports = s.reports;
+      for (const { routeId, report: x } of a.items) {
+        if (!s.routes.some(r => r.id === routeId)) continue;
+        const confirmations = Array.from({ length: Math.max(0, Math.floor(x.confirmations) || 0) }, (_, i) => `remote-${i + 1}`);
+        if (reports.some(r => r.id === x.id)) { reports = reports.map(r => r.id === x.id ? { ...r, confirmations } : r); continue; }
+        const report: CitizenReport = { id: x.id, author: x.isMine ? 'me' : 'remote-author', routeId, situation: x.situation, place: x.place, time: x.time, note: x.note, createdAt: a.now, confirmations, helpfulUsers: [] };
+        if (validReportInput(report)) reports = [report, ...reports];
+      }
+      return reports === s.reports ? s : { ...s, reports };
+    }
     case 'wear': return canWear(s, a.id) ? { ...s, outfit: a.id } : s;
   }
 }

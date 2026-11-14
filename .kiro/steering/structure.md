@@ -9,25 +9,32 @@ inclusion: always
 ```
 .kiro/
   specs/            기능별 requirements, design, tasks
-  steering/         product, tech, structure (always), design-system, infra (fileMatch), deploy-checklist (manual)
-  hooks/, scripts/  저장 후 점검, PreToolUse 차단 훅과 스크립트
+  steering/         product, tech, structure, api-contract, decisions (always), design-system, infra, backend, frontend (fileMatch), deploy-checklist (manual)
+  agents/           lead 1개 + 담당 8개 (목록과 쓰기 경로는 AGENTS.md)
+  hooks/, scripts/  guard-pretool(PreToolUse 차단), compaction(압축 전후), 저장 후 점검과 스크립트
   evidence/         훅 차단 실행 기록
-  agents/           data, transit, docs, lead 역할 설정
-api/                Vercel API 핸들러
-server/             서버 전용 외부 API 중계
+  settings/         cli.json (자동 압축 40%)
+api/                Vercel API 핸들러 (jamjam-transit)
+server/             서버 전용 외부 API 중계 (jamjam-transit)
 design/             화면 시안, DESIGN.md, 키로 렌더러(animation/)
-docs/               PLANNING.md, PRD.md, 기능명세서.xlsx
+docs/               PLANNING.md, PRD.md, DECISIONS.md, 기능명세서.xlsx
 data/SOURCES.md     데이터 소스 검증 기록
+supabase/           migrations/, functions/, tests/ (backend-dev)
+qa/                 scenarios.md, reports/ (qa)
+AGENTS.md           에이전트 목록과 명령
 scripts/
-  collect/          소스별 수집 스크립트 (개발 시점에만 실행)
+  collect/          공공데이터 수집·정제 (jamjam-data)
   eval/             합성 시나리오 생성과 평가
 src/
   main.tsx, App.tsx
+  api/              Supabase 계약과 구현 (backend-dev 소유, 나머지는 읽기만)
   theme/            theme.css, situation.ts
   engine/           판정 엔진 (순수 TypeScript)
   features/
-    transit/        장소·길찾기 계약과 화면
-    baseline/       실제 공공데이터 기준선 조회
+    transit/        장소·길찾기 계약과 화면 (jamjam-transit)
+    routes/         경로 모델 (jamjam-transit)
+    baseline/       실제 공공데이터 기준선 조회 (jamjam-data)
+    live/           현재 지역 신호 (ui-dev)
     reports/        제보 저장, 신뢰도 검증, Anomaly 변환
     points/         ledger, 레벨, 해금
   data/             번들 JSON, public/, synthetic/, evaluation.json
@@ -45,7 +52,8 @@ PRESENTATION.pdf    레포 최상단, 제출 필수
 |---|---|---|
 | `src/engine/` | `src/data/` 타입 | React, `pages/`, `components/` |
 | `src/features/` | `src/engine/` 타입 | `pages/`, `components/` |
-| `src/pages/` | `components/`, `state/`, `hooks/`, `engine/`, `features/` | `scripts/` |
+| `src/api/` | `src/engine/` 타입, `features/` 타입 | `pages/`, `components/`, `state/` |
+| `src/pages/` | `components/`, `state/`, `hooks/`, `engine/`, `features/`, `api/` | `scripts/`, `@supabase/supabase-js` 직접 사용 |
 | `scripts/` | `src/engine/` | `src/pages/`, React |
 
 ## 파일 규칙
