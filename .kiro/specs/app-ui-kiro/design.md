@@ -91,3 +91,9 @@ interface DayResult {
 - 컴포넌트 테스트(`vitest` + `@testing-library/react`): 홈의 평범한 날/이상 분기, 알림 상세의 3요소 표시, 피드백 1회 제한, 제보 필수값 검사, 잠긴 아이템 착용 불가.
 - 수동 확인: 390px 폭, 480px 초과 폭 가운데 정렬, 하단 탭 안전 영역.
 - 시안 대조: `design/images/scene1~3.png`, `01`~`04`와 나란히 놓고 확인한다(시각 회귀 도구는 쓰지 않는다).
+
+## 구현 반영 (2026-11-14)
+
+실제 내비게이션은 hash 기반 `#home/#notices/#report/#kiro/#routes/#eval`이다. 엔진 메모이제이션은 별도 useDay 대신 AppState에 통합했다. 작은 표시 요소는 페이지 내부 JSX로 구성하고 `BottomNav`, `KiroAvatar`, `LevelCard`, `PageHeader`, `UnlockDialog`를 공유한다.
+
+경로 검증은 `src/features/routes/route.ts`에서 공통 처리한다. 경유지는 배열의 출발·도착 사이에 추가·삭제하고 같은 지점 중복을 차단한다. 경로가 없으면 홈 점수를 대시로 표시하고 제보 화면에서 경로 등록으로 안내한다. UnlockDialog는 이전 저장 상태와 현재 해금 상태를 비교해 신규 획득만 표시한다. 착용은 store.outfit을 홈과 옷장에서 함께 읽는다. 출처 표기는 `src/data/provenance.ts`와 sources.json을 공유한다.

@@ -1,6 +1,7 @@
 import type { Route } from '../engine/types';
 import { DEFAULT_THRESHOLD, updateThreshold } from '../engine/threshold';
-import { dayKey, timeToMinutes } from '../engine/utils';
+import { dayKey } from '../engine/utils';
+import { routeError } from '../features/routes/route';
 import { validReportInput, confirmReport, isConfirmed, REPORT_TYPES } from '../features/reports/reportStore';
 import type { CitizenReport } from '../features/reports/reportStore';
 import { award, totalPoints, levelFor, OUTFITS } from '../features/points/ledger';
@@ -17,7 +18,7 @@ export function initialStore(): Store {
   return { version: 1, routes: structuredClone(routesRaw.items) as Route[], threshold: DEFAULT_THRESHOLD, feedback: {}, reports: [], ledger: [], read: [], outfit: 'base', unlocked: [] };
 }
 export function validRoute(r: Route): boolean {
-  return !!r && typeof r.id === 'string' && !!r.id && typeof r.district === 'string' && !!r.district.trim() && Array.isArray(r.stops) && r.stops.length >= 2 && r.stops.every(s => typeof s === 'string' && !!s.trim()) && Number.isFinite(timeToMinutes(r.departAt)) && Array.isArray(r.days) && r.days.length > 0 && r.days.every(d => ['weekday', 'weekend', 'holiday', 'afterHoliday'].includes(d));
+  return routeError(r) === null;
 }
 export function restoreStore(raw: string | null): Store {
   try {
@@ -45,7 +46,11 @@ export type Action =
   | { type: 'wear'; id: string };
 export function reducer(s: Store, a: Action): Store {
   switch (a.type) {
-    case 'route': return validRoute(a.route) ? { ...s, routes: [...s.routes.filter(r => r.id !== a.route.id), a.route] } : s;
+    case 'route': {
+      if (!validRoute(a.route)) return s;
+      const route = { ...a.route, stops: a.route.stops.map(stop => stop.trim()) };
+      return { ...s, routes: s.routes.some(r => r.id === route.id) ? s.routes.map(r => r.id === route.id ? route : r) : [...s.routes, route] };
+    }
     case 'deleteRoute': return { ...s, routes: s.routes.filter(r => r.id !== a.id) };
     case 'feedback': return Object.hasOwn(s.feedback, a.id) ? s : { ...s, threshold: updateThreshold(s.threshold, a.value), feedback: { ...s.feedback, [a.id]: a.value }, ledger: award(s.ledger, { id: `feedback:${a.id}`, amount: 1, reason: '알림 피드백' }) };
     case 'report': {

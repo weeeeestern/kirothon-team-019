@@ -1,7 +1,39 @@
 {
-  "meta": { "source": "synthetic", "collectedAt": "2026-11-14T00:00:00Z", "mode": "synthetic" },
+  "meta": {
+    "source": "synthetic",
+    "collectedAt": null,
+    "mode": "synthetic",
+    "generatedAt": "2026-11-14T00:00:00Z"
+  },
   "items": [
-    { "id": "r1", "district": "강남구",  "stops": ["신논현","강남","역삼","선릉"],    "departAt": "08:00", "days": ["weekday"] },
-    { "id": "r2", "district": "마포구",  "stops": ["홍대입구","신촌","이대"],         "departAt": "08:30", "days": ["weekday"] }
+    {
+      "id": "r1",
+      "district": "강남구",
+      "stops": [
+        "신논현",
+        "강남",
+        "역삼",
+        "선릉"
+      ],
+      "departAt": "08:00",
+      "days": [
+        "weekday",
+        "afterHoliday"
+      ]
+    },
+    {
+      "id": "r2",
+      "district": "마포구",
+      "stops": [
+        "홍대입구",
+        "신촌",
+        "이대"
+      ],
+      "departAt": "17:30",
+      "days": [
+        "weekday",
+        "afterHoliday"
+      ]
+    }
   ]
 }

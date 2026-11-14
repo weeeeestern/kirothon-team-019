@@ -3,6 +3,7 @@ import { useState, useEffect } from 'react';
 import { ConfigProvider, SafeArea } from 'antd-mobile';
 import koKR from 'antd-mobile/es/locales/ko-KR';
 import { BottomNav } from '@/components/BottomNav';
+import { UnlockDialog } from '@/components/UnlockDialog';
 import { AppState, useApp } from '@/state/AppState';
 import { Home } from '@/pages/Home';
 import { NoticeDetail } from '@/pages/NoticeDetail';
@@ -21,10 +22,11 @@ function AppInner() {
   return <div className="app"><SafeArea position="top" />{storageError && <div role="status" className="storage-message">저장 공간을 사용할 수 없어 이번 화면에서만 유지돼요.</div>}
     <main id="main-content">
       {page === 'home' && <Home navigate={navigate} />}{page === 'notices' && <NoticeDetail />}
-      {page === 'report' && <Report />}{page === 'kiro' && <KiroRoom navigate={navigate} />}
+      {page === 'report' && <Report navigate={navigate} />}{page === 'kiro' && <KiroRoom navigate={navigate} />}
       {page === 'routes' && <Routes navigate={navigate} />}{page === 'eval' && <Eval navigate={navigate} />}
     </main>
     <BottomNav page={page} unread={unread} navigate={navigate} />
+    <UnlockDialog navigate={navigate} />
   </div>;
 }
 export default function App() { return <ConfigProvider locale={koKR}><AppState><AppInner /></AppState></ConfigProvider>; }

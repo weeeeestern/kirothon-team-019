@@ -1,0 +1,52 @@
+{
+  "meta": {
+    "source": "잠잠 합성 시나리오",
+    "mode": "synthetic",
+    "generatedAt": "2026-11-14T00:00:00Z",
+    "collectedAt": null
+  },
+  "items": [
+    {
+      "name": "기상청 단기예보",
+      "mode": "synthetic",
+      "verification": "unverified",
+      "collectedAt": null
+    },
+    {
+      "name": "서울시 실시간 도시데이터",
+      "mode": "synthetic",
+      "verification": "unverified",
+      "collectedAt": null
+    },
+    {
+      "name": "TOPIS 돌발상황",
+      "mode": "synthetic",
+      "verification": "unverified",
+      "collectedAt": null
+    },
+    {
+      "name": "지하철 실시간 도착",
+      "mode": "synthetic",
+      "verification": "unverified",
+      "collectedAt": null
+    },
+    {
+      "name": "서울 버스 도착",
+      "mode": "synthetic",
+      "verification": "unverified",
+      "collectedAt": null
+    },
+    {
+      "name": "지하철 혼잡도 통계",
+      "mode": "synthetic",
+      "verification": "unverified",
+      "collectedAt": null
+    },
+    {
+      "name": "에어코리아",
+      "mode": "synthetic",
+      "verification": "unverified",
+      "collectedAt": null
+    }
+  ]
+}
