@@ -1,0 +1,44 @@
+{
+  "basis": "합성 시나리오 기준",
+  "scenarioCount": 24,
+  "ordinaryDayNotices": 0,
+  "detectionRate": 1,
+  "reductionVsFixed": 0.75,
+  "helpfulRatio": null,
+  "engineCount": 10,
+  "fixedCount": 40,
+  "injected": 10,
+  "detected": 10,
+  "method": "페르소나 2종 · 평범한 날 14건 · 관련 이상 10건과 무관 지역/시각 신호 30건. 비교군은 경로·시간을 고려하지 않고 편차 z ≥ 1.0인 신호에 알림을 생성해요. 실제 서비스 성능을 나타내지 않아요.",
+  "collectedAt": "2026-11-14T00:00:00Z",
+  "sources": [
+    {
+      "name": "기상청 단기예보",
+      "mode": "synthetic"
+    },
+    {
+      "name": "서울시 실시간 도시데이터",
+      "mode": "synthetic"
+    },
+    {
+      "name": "TOPIS 돌발상황",
+      "mode": "synthetic"
+    },
+    {
+      "name": "지하철 실시간 도착",
+      "mode": "synthetic"
+    },
+    {
+      "name": "서울 버스 도착",
+      "mode": "synthetic"
+    },
+    {
+      "name": "지하철 혼잡도 통계",
+      "mode": "synthetic"
+    },
+    {
+      "name": "에어코리아",
+      "mode": "synthetic"
+    }
+  ]
+}

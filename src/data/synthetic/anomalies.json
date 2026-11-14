@@ -1,0 +1,60 @@
+{
+  "meta": {
+    "source": "synthetic",
+    "collectedAt": "2026-11-14T00:00:00Z",
+    "mode": "synthetic",
+    "note": "검증된 실데이터 번들이 없어 합성 시나리오를 사용해요. API 승인 여부와는 별개예요."
+  },
+  "items": [
+    {
+      "id": "a1",
+      "situation": "congestion",
+      "timing": "sudden",
+      "area": "강남",
+      "value": 95,
+      "startsAt": "07:30",
+      "endsAt": "09:30",
+      "source": "synthetic"
+    },
+    {
+      "id": "a2",
+      "situation": "strike",
+      "timing": "scheduled",
+      "area": "신촌",
+      "value": 30,
+      "startsAt": "07:00",
+      "endsAt": "10:00",
+      "source": "synthetic"
+    },
+    {
+      "id": "a3",
+      "situation": "rain",
+      "timing": "sudden",
+      "area": "여의도",
+      "value": 85,
+      "startsAt": "17:00",
+      "endsAt": "19:00",
+      "source": "synthetic"
+    },
+    {
+      "id": "a4",
+      "situation": "marathon",
+      "timing": "scheduled",
+      "area": "광화문",
+      "value": 100,
+      "startsAt": "08:00",
+      "endsAt": "14:00",
+      "source": "synthetic"
+    },
+    {
+      "id": "a5",
+      "situation": "construction",
+      "timing": "scheduled",
+      "area": "홍대입구",
+      "value": 70,
+      "startsAt": "07:00",
+      "endsAt": "09:00",
+      "source": "synthetic"
+    }
+  ]
+}

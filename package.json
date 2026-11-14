@@ -1,0 +1,10 @@
+{
+  "name": "jamjam-workspace",
+  "private": true,
+  "scripts": {
+    "dev": "npm --prefix src run dev -- --host 127.0.0.1",
+    "build": "npm --prefix src run build",
+    "test": "npm --prefix src test",
+    "evaluate": "npm --prefix src run evaluate"
+  }
+}
