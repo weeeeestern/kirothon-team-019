@@ -91,3 +91,9 @@ fieldset { border: 0; padding: 0; margin: 0 0 var(--pyeongso-space-6); } legend 
 .storage-message { padding: var(--pyeongso-space-3); background: var(--pyeongso-surface-brand); color: var(--pyeongso-primary-text); font-size: 13px; }
 @media (min-width: 600px) { #root { border-inline: 1px solid var(--pyeongso-border); } }
 @media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation: none !important; transition: none !important; scroll-behavior: auto !important; } }
+
+.nav-items { display: flex; }
+.nav-button { flex: 1; border: 0; min-height: 56px; background: transparent; color: var(--pyeongso-text-secondary); display: flex; flex-direction: column; align-items: center; justify-content: center; gap: var(--pyeongso-space-1); font-size: 12px; }
+.nav-icon { display: block; font-size: 24px; line-height: 28px; padding-inline: var(--pyeongso-space-3); border-radius: var(--adm-radius-s); }
+.nav-button.active { color: var(--pyeongso-primary-text); }
+.nav-button.active .nav-icon { background: var(--pyeongso-surface-brand); }

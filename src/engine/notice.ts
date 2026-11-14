@@ -14,6 +14,7 @@ const ACTIONS: Record<string, string> = {
 export function buildNotice(
   anomaly: Anomaly, route: Route, impact: number, z: number, baseline: Baseline,
 ): Notice {
+  const unit = anomaly.situation === 'congestion' && anomaly.source !== 'report' ? '%' : '점';
   const timing = anomaly.timing ?? classifyTiming(anomaly.situation);
   const deliverAt = timing === 'scheduled'
     ? '전날 22:00'
@@ -23,12 +24,12 @@ export function buildNotice(
   return {
     id: `${route.id}:${anomaly.id}`,
     baselineValue: baseline.mean, currentValue: anomaly.value,
-    unit: anomaly.situation === 'congestion' ? '%' : '점', source: anomaly.source,
+    unit, source: anomaly.source,
     anomalyId: anomaly.id,
     routeId: route.id,
     situation: anomaly.situation,
     what: `${anomaly.area} ${situationLabel(anomaly.situation)}`,
-    delta: `평소 ${Math.round(baseline.mean)}${anomaly.situation === 'congestion' ? '%' : '점'} → 오늘 ${Math.round(anomaly.value)}${anomaly.situation === 'congestion' ? '%' : '점'} (약 ${ratio}배)`,
+    delta: `평소 ${Math.round(baseline.mean)}${unit} → 오늘 ${Math.round(anomaly.value)}${unit} (약 ${ratio}배)`,
     action: ACTIONS[anomaly.situation] ?? '이동 계획을 조정해요',
     reason: `기준선 대비 편차 ${z.toFixed(1)}σ · 출처: ${anomaly.source === 'synthetic' ? '합성 데이터' : anomaly.source === 'report' ? '시민 제보' : '공공 API'}`,
     learning: baseline.learning,

@@ -1,4 +1,4 @@
-import { createContext, useContext, useState, useMemo, useReducer, useEffect } from 'react';
+import { createContext, useContext, useState, useMemo, useReducer, useEffect, useRef } from 'react';
 import type { ReactNode, Dispatch } from 'react';
 import { runDay } from '@/engine';
 import type { Anomaly, EngineResult, Situation } from '@/engine';
@@ -32,6 +32,11 @@ export function AppState({ children }: { children: ReactNode }) {
     const notices = [...demo.notices, ...reported.notices].sort((a, b) => b.impact - a.impact);
     return { notices, ordinariness: Math.min(demo.ordinariness, reported.ordinariness), situation: notices[0]?.situation ?? 'ordinary' } as EngineResult;
   }, [mode, store.routes, store.reports, store.threshold, day, now]);
+  const lastSituation = useRef(result.situation);
+  useEffect(() => {
+    if (result.situation !== 'ordinary' && lastSituation.current !== result.situation) celebrate('surprise');
+    lastSituation.current = result.situation;
+  }, [result.situation]);
   const points = totalPoints(store.ledger);
   const unread = result.notices.filter(n => !store.read.includes(n.id)).length;
   return <Ctx.Provider value={{ store, dispatch, result, points, mode, setMode, now, day, storageError, unread, celebration, celebrate }}>{children}</Ctx.Provider>;

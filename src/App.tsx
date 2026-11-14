@@ -1,7 +1,8 @@
+import './react19-compat';
 import { useState, useEffect } from 'react';
-import { ConfigProvider, SafeArea, TabBar } from 'antd-mobile';
+import { ConfigProvider, SafeArea } from 'antd-mobile';
 import koKR from 'antd-mobile/es/locales/ko-KR';
-import { HomeOutlined, BellOutlined, FlagOutlined, SmileOutlined } from '@ant-design/icons';
+import { BottomNav } from '@/components/BottomNav';
 import { AppState, useApp } from '@/state/AppState';
 import { Home } from '@/pages/Home';
 import { NoticeDetail } from '@/pages/NoticeDetail';
@@ -23,12 +24,7 @@ function AppInner() {
       {page === 'report' && <Report />}{page === 'kiro' && <KiroRoom navigate={navigate} />}
       {page === 'routes' && <Routes navigate={navigate} />}{page === 'eval' && <Eval navigate={navigate} />}
     </main>
-    <nav className="bottom-nav" aria-label="메인 메뉴"><TabBar activeKey={page === 'routes' ? 'home' : page === 'eval' ? 'kiro' : page} onChange={p => navigate(p as Page)}>
-      <TabBar.Item key="home" icon={<HomeOutlined />} title="오늘" />
-      <TabBar.Item key="notices" icon={<BellOutlined />} title="알림" badge={unread || undefined} />
-      <TabBar.Item key="report" icon={<FlagOutlined />} title="제보" />
-      <TabBar.Item key="kiro" icon={<SmileOutlined />} title="키로의 방" />
-    </TabBar><SafeArea position="bottom" /></nav>
+    <BottomNav page={page} unread={unread} navigate={navigate} />
   </div>;
 }
 export default function App() { return <ConfigProvider locale={koKR}><AppState><AppInner /></AppState></ConfigProvider>; }
