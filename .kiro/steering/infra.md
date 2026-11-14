@@ -1,5 +1,6 @@
 ---
-inclusion: always
+inclusion: fileMatch
+fileMatchPattern: ["api/**", "server/**", "src/features/transit/**", "src/features/live/**", "scripts/collect/**", "data/**", "src/data/public/**", "src/.env.example", "vercel.json"]
 ---
 
 # 인프라 및 외부 API 지침
