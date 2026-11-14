@@ -17,7 +17,7 @@ export function validPlace(value: unknown): value is Place {
 export function validJourney(value: unknown): value is TransitJourney {
   if (!record(value) || value.provider !== 'ODsay' || !text(value.id) || !number(value.totalTime, 2880) || !number(value.totalWalk, 200000) || !number(value.payment, 1000000) || !number(value.transferCount, 100) || !coordinates(value.path) || !strings(value.stations)) return false;
   if (value.pathKind !== undefined && !['geometry', 'stops'].includes(String(value.pathKind))) return false;
-  return Array.isArray(value.segments) && value.segments.length > 0 && value.segments.length <= 100 && value.segments.every(s => record(s) && ['subway', 'bus', 'walk'].includes(String(s.type)) && text(s.label) && number(s.time, 2880) && (s.distance === undefined || number(s.distance, 2000000)) && ['from', 'to', 'line'].every(k => s[k] === undefined || (typeof s[k] === 'string' && s[k].length <= 120)) && (s.stations === undefined || strings(s.stations)) && (s.path === undefined || coordinates(s.path)));
+  return Array.isArray(value.segments) && value.segments.length > 0 && value.segments.length <= 100 && value.segments.every(s => record(s) && ['subway', 'bus', 'walk'].includes(String(s.type)) && text(s.label) && number(s.time, 2880) && (s.distance === undefined || number(s.distance, 2000000)) && ['from', 'to', 'line'].every(k => s[k] === undefined || (typeof s[k] === 'string' && s[k].length <= 120)) && (s.stopsComplete === undefined || typeof s.stopsComplete === 'boolean') && (s.stations === undefined || strings(s.stations)) && (s.path === undefined || coordinates(s.path)));
 }
 
 export function journeyStops(origin: Place, destination: Place, journey: TransitJourney): string[] {

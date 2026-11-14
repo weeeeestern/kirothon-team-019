@@ -25,11 +25,12 @@ export function normalizePath(path, index = 0) {
     const line = type === 'subway' ? text(lane.name) : text(lane.busNo);
     const stops = list(p.passStopList?.stations).slice(0, 200);
     const stations = stops.map(s => text(s.stationName)).filter(Boolean);
+    const stopsComplete = stations.length >= 2 && stations.length === stops.length;
     const points = compactPath(stops.map(s => coordinate(s.x, s.y)).filter(Boolean));
     const from = text(p.startName), to = text(p.endName);
     if (!stations.length) stations.push(...[from, to].filter(Boolean));
     if (!points.length) points.push(...[coordinate(p.startX, p.startY), coordinate(p.endX, p.endY)].filter(Boolean));
-    return [{ type, label: type === 'walk' ? '도보' : line || (type === 'subway' ? '지하철' : '버스'), time: amount(p.sectionTime), ...(p.distance != null && Number.isFinite(Number(p.distance)) && Number(p.distance) >= 0 ? { distance: Number(p.distance) } : {}), ...(from ? { from } : {}), ...(to ? { to } : {}), stations, ...(line ? { line } : {}), path: points }];
+    return [{ type, label: type === 'walk' ? '도보' : line || (type === 'subway' ? '지하철' : '버스'), time: amount(p.sectionTime), ...(p.distance != null && Number.isFinite(Number(p.distance)) && Number(p.distance) >= 0 ? { distance: Number(p.distance) } : {}), ...(from ? { from } : {}), ...(to ? { to } : {}), stations, stopsComplete, ...(line ? { line } : {}), path: points }];
   });
   if (!segments.length) return null;
   const stations = [...new Set(segments.filter(s => s.type !== 'walk').flatMap(s => s.stations))];

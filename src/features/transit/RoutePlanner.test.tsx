@@ -20,6 +20,45 @@ async function pickPlaces(user: ReturnType<typeof userEvent.setup>) {
   await user.type(screen.getByLabelText('도착지'), '선릉'); await user.click(screen.getByRole('button', { name: '도착지 검색' })); await user.click(await screen.findByRole('button', { name: /선릉역.*서울 강남구/ }));
 }
 describe('actual route UI contract', () => {
+  it('automatically selects a less affected candidate, supports manual override, and recomputes for time changes', async () => {
+    const user = userEvent.setup(); const onSave = vi.fn();
+    const now = new Date('2026-11-14T08:00:00+09:00');
+    const report = { id: 'r', routeId: 'saved', author: 'a', situation: 'congestion' as const, place: '역삼', time: '08:00', note: '', createdAt: '2026-11-14T07:50:00+09:00', confirmations: ['b', 'c'], helpfulUsers: [] };
+    const direct = structuredClone(journey); direct.segments[1].stopsComplete = true;
+    const detour = { ...structuredClone(direct), id: 'detour', totalTime: 20, stations: ['강남', '삼성', '선릉'], segments: [{ type: 'subway' as const, label: '우회선', time: 20, stations: ['강남', '삼성', '선릉'], stopsComplete: true }] };
+    render(<RoutePlanner reports={[report]} now={now} onSave={onSave} onManual={vi.fn()} />);
+    await pickPlaces(user);
+    vi.mocked(searchJourneys).mockResolvedValue({ routes: [direct, detour], fetchedAt });
+    await user.click(screen.getByRole('button', { name: '대중교통 경로 찾기' }));
+    const alternative = await screen.findByRole('button', { name: /경로 2.*선택됨/ });
+    expect(alternative.getAttribute('aria-pressed')).toBe('true');
+    expect(screen.getByText(/첫 번째 후보보다 겹치는 이상 신호가 1건 적은/)).toBeTruthy();
+    await user.click(screen.getByRole('button', { name: /경로 1.*12분/ }));
+    expect(screen.getByRole('button', { name: /경로 1.*선택됨/ }).getAttribute('aria-pressed')).toBe('true');
+    await user.click(alternative);
+    await user.click(screen.getByRole('button', { name: '이 경로 저장' }));
+    expect(onSave.mock.calls[0][0].journey.id).toBe('detour');
+    fireEvent.change(screen.getByLabelText('알림 기준 출발 시각'), { target: { value: '10:00' } });
+    expect(screen.getByRole('button', { name: /경로 1.*선택됨/ }).getAttribute('aria-pressed')).toBe('true');
+    expect(screen.queryByText('이상 신호 영향이 적은 대안')).toBeNull();
+    fireEvent.change(screen.getByLabelText('알림 기준 출발 시각'), { target: { value: '08:00' } });
+    expect(screen.getByRole('button', { name: /경로 2.*선택됨/ })).toBeTruthy();
+    fireEvent.change(screen.getByLabelText('우회 시 추가 이동시간'), { target: { value: '0' } });
+    expect(screen.getByRole('button', { name: /경로 1.*선택됨/ })).toBeTruthy();
+    expect(screen.getByText(/추가 0분 이내 후보에서/)).toBeTruthy();
+  });
+  it('does not inject synthetic alerts without opting in to the labeled simulation', async () => {
+    const user = userEvent.setup(); render(<RoutePlanner now={new Date('2026-11-14T08:00:00+09:00')} onSave={vi.fn()} onManual={vi.fn()} />);
+    await pickPlaces(user); vi.mocked(searchJourneys).mockResolvedValue({ routes: [journey], fetchedAt });
+    await user.click(screen.getByRole('button', { name: '대중교통 경로 찾기' }));
+    expect(await screen.findByText('비교할 유효한 제보가 없어요. 일반 길찾기 결과를 표시해요.')).toBeTruthy();
+    await user.click(screen.getByText('우회 추천 시연'));
+    await user.click(screen.getByLabelText('합성 혼잡 신호로 비교하기'));
+    expect(screen.getByText('합성 데이터로 우회 추천 시연 중')).toBeTruthy();
+    expect(screen.getByText(/역삼 · 혼잡 시연 · 합성 시연/)).toBeTruthy();
+    await user.click(screen.getByLabelText('합성 혼잡 신호로 비교하기'));
+    expect(screen.queryByText(/역삼 · 혼잡 시연 · 합성 시연/)).toBeNull();
+  });
   it('keeps selected places visible on the map when transit lookup fails', async () => {
     const user = userEvent.setup(); render(<RoutePlanner onSave={vi.fn()} onManual={vi.fn()} />);
     await pickPlaces(user);

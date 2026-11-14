@@ -32,6 +32,10 @@ test('ODsay normalization preserves intermediate stations, units and transport m
   assert.equal(route.transferCount, 0);
   assert.equal(route.payment, 1550);
   assert.equal(route.segments[1].line, '수도권 2호선');
+  assert.equal(route.segments[1].stopsComplete, true);
+  const withoutStops = structuredClone(fixture);
+  delete withoutStops.subPath[1].passStopList;
+  assert.equal(normalizePath(withoutStops).segments[1].stopsComplete, false);
   assert.equal(route.pathKind, 'stops');
   assert.equal(route.path.length, 3);
   assert.equal(Object.hasOwn(route.segments[0], 'from'), false);

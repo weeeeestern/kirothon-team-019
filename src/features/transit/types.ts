@@ -10,6 +10,8 @@ export interface TransitSegment {
   from?: string;
   to?: string;
   stations?: string[];
+  /** True only when the provider supplied a passing-stop list. */
+  stopsComplete?: boolean;
   line?: string;
   path?: Coordinate[];
 }

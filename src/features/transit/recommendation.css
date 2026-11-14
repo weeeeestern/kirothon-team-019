@@ -1,0 +1,9 @@
+.routing-advice { margin-block: var(--pyeongso-space-5); padding: var(--pyeongso-space-4); border: 1px solid var(--pyeongso-border); border-radius: var(--adm-radius-m); background: var(--pyeongso-surface-brand); }
+.routing-advice strong { color: var(--pyeongso-primary-text); font-size: 14px; }
+.routing-advice p { margin-block: var(--pyeongso-space-2); font-size: 13px; }
+.routing-advice .caption { font-size: 11px; color: var(--pyeongso-text-secondary); }
+.routing-recommended { display: block; color: var(--pyeongso-primary-text); font-size: 13px; font-weight: 700; margin-bottom: var(--pyeongso-space-2); }
+.journey-risk { display: block; font-size: 12px; margin-top: var(--pyeongso-space-2); color: var(--pyeongso-text-secondary); overflow-wrap: anywhere; }
+.routing-simulation { margin-block: var(--pyeongso-space-4); border-block: 1px solid var(--pyeongso-border); }
+.routing-simulation summary { min-height: 44px; padding-block: var(--pyeongso-space-3); cursor: pointer; font-size: 13px; }
+.routing-simulation-toggle { display: flex; align-items: center; gap: var(--pyeongso-space-2); min-height: 44px; font-size: 13px; }

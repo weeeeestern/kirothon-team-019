@@ -14,7 +14,7 @@ import '@/theme/transit.css';
 import '@/theme/routes.css';
 const fresh = (): Route => ({ id: crypto.randomUUID(), district: '강남구', stops: ['', ''], departAt: '08:00', days: ['weekday', 'afterHoliday'] });
 export function Routes({ navigate }: { navigate: (p: Page) => void }) {
-  const { store, dispatch } = useApp(); const [editing, setEditing] = useState<Route | null>(null); const [error, setError] = useState('');
+  const { store, dispatch, now } = useApp(); const [editing, setEditing] = useState<Route | null>(null); const [error, setError] = useState('');
   const [planning, setPlanning] = useState<Route | 'new' | null>(null);
   const region = regions.items.find(r => r.name === editing?.district);
   function save() {
@@ -38,7 +38,7 @@ export function Routes({ navigate }: { navigate: (p: Page) => void }) {
     </section>)}
     {!store.routes.length && <p className="empty">아직 등록한 경로가 없어요.</p>}<Button block fill="outline" onClick={() => { setEditing(fresh()); setError(''); }}>새 경로 등록</Button><p className="caption">익숙한 역·정류장은 직접 입력해서 등록할 수도 있어요.</p>
     <Popup visible={!!planning} onMaskClick={() => setPlanning(null)} bodyClassName="transit-popup" bodyStyle={{ borderTopLeftRadius: 'var(--adm-radius-l)', borderTopRightRadius: 'var(--adm-radius-l)' }}>
-      {planning && <div className="page transit-popup-content"><div className="row between"><h2>내 이동 경로 찾기</h2><Button fill="none" onClick={() => setPlanning(null)}>닫기</Button></div><RoutePlanner initial={planning === 'new' ? undefined : planning} onSave={route => { dispatch({ type: 'route', route }); setPlanning(null); Toast.show('이동 경로를 저장했어요'); }} onManual={() => { setPlanning(null); setEditing(fresh()); setError(''); }} /></div>}
+      {planning && <div className="page transit-popup-content"><div className="row between"><h2>내 이동 경로 찾기</h2><Button fill="none" onClick={() => setPlanning(null)}>닫기</Button></div><RoutePlanner reports={store.reports} now={now} initial={planning === 'new' ? undefined : planning} onSave={route => { dispatch({ type: 'route', route }); setPlanning(null); Toast.show('이동 경로를 저장했어요'); }} onManual={() => { setPlanning(null); setEditing(fresh()); setError(''); }} /></div>}
     </Popup>
     <Popup visible={!!editing} onMaskClick={() => setEditing(null)} bodyStyle={{ borderTopLeftRadius: 'var(--adm-radius-l)', borderTopRightRadius: 'var(--adm-radius-l)', maxHeight: '90dvh', overflowY: 'auto' }}>
       {editing && <form className="page route-form" onSubmit={e => { e.preventDefault(); save(); }}><div className="row between"><h2>경로 설정</h2><Button fill="none" onClick={() => setEditing(null)}>닫기</Button></div>
