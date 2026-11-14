@@ -16,12 +16,12 @@ block() {
 CMD="$(printf '%s' "$INPUT" | grep -Eo '"command"[[:space:]]*:[[:space:]]*"([^"\\]|\\.)*"' | head -1 || true)"
 
 # 이 레포의 외부 API 키 이름(.kiro/steering/infra.md)과 일반 토큰 형식
-SECRET_ERE='AKIA[0-9A-Z]{16}|BEGIN [A-Z ]*PRIVATE KEY|gh[pousr]_[A-Za-z0-9]{36,}|(KAKAO|ODSAY|SEOUL|PUBLIC_DATA|SUPABASE)[A-Z_]*(KEY|SECRET|TOKEN)[^A-Za-z0-9]{0,6}[A-Za-z0-9%+/=_.-]{16,}'
+SECRET_ERE='AKIA[0-9A-Z]{16}|BEGIN [A-Z ]*PRIVATE KEY|gh[pousr]_[A-Za-z0-9]{36,}|(KAKAO|ODSAY|SEOUL|PUBLIC_DATA|SUPABASE)[A-Z_]*(KEY|SECRET|TOKEN)[[:space:]]*[=:][[:space:]]*(\\?["'"'"'])?[A-Za-z0-9%+/=_.-]{16,}|(postgres|postgresql|mysql|mongodb(\+srv)?|redis)://[^:/@[:space:]"]+:[^@[:space:]"]{6,}@'
 PLACEHOLDER_ERE='your|example|placeholder|changeme|xxxx|<.*>'
 
 if [ -n "$CMD" ]; then
   # 1) 강제 push 금지
-  if printf '%s' "$CMD" | grep -Eq 'git[[:space:]]+push.*([[:space:]]--force|--force-with-lease|[[:space:]]-f([[:space:]"]|$))'; then
+  if printf '%s' "$CMD" | grep -Eq 'git[[:space:]]+push.*([[:space:]]--force|--force-with-lease|[[:space:]]-f([[:space:]"]|$)|[[:space:]]\+[A-Za-z0-9_./-])'; then
     block "force push는 금지입니다. 일반 push는 사람이 합니다."
   fi
 
