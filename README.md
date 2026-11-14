@@ -45,15 +45,15 @@
 
 | 기능 | 해결하는 불편 | 코드 위치 |
 |---|---|---|
-| 내 경로 등록 (장소 검색, 대중교통 경로, 출발 시각, 요일) | 매번 앱을 열어 같은 길을 다시 찾아야 하는 번거로움 | `src/pages/Routes.tsx`, `src/features/transit/`, `api/` |
-| 평소와의 비교 | 오늘이 평소와 다른지 직접 판단해야 하는 부담 | `scripts/collect/`, `src/features/baseline/` |
-| 내 길·시간에 맞는 알림 판정 | 내게 상관없는 알림이 많아 중요한 알림이 묻히는 문제 | `src/engine/` |
-| 이유가 보이는 알림 (변화, 평소와의 비교, 권장 행동, 출처) | 알림을 받아도 무엇을 해야 할지 모르는 문제 | `src/pages/NoticeDetail.tsx` |
-| 대안 경로 추천 | 문제를 알아도 다른 길을 직접 찾아봐야 하는 번거로움. 확정된 이웃 제보와 겹치는 구간을 피한 경로를 추천 | `src/features/transit/recommendation.ts`, `src/features/transit/RoutingAdvice.tsx` |
-| 알림 피드백 | 내게 맞지 않는 알림이 계속 오는 문제. '도움이 됐어요 / 필요 없었어요'로 알림 기준을 조정 | `src/state/`, `src/engine/threshold.ts` |
-| 현재 지역 신호 (강남역, 여의도) | 지금 동네 상황을 따로 찾아봐야 하는 번거로움 | `src/pages/Home.tsx`, `api/` |
-| 이웃 제보와 포인트 | 공공데이터에 없는 동네 변화를 알 수 없는 문제 | `src/features/reports/`, `src/features/points/` |
-| 키로와 오늘 평범도 | 알림이 없는 날 앱이 제대로 동작하는지 알 수 없는 불안 | `src/pages/Home.tsx`, `src/pages/KiroRoom.tsx` |
+| 내 경로 등록 (장소, 이동 경로, 출발 시간, 요일) | 매일 같은 길을 다니는데도 이동 경로를 반복해서 검색해야 한다. | `src/pages/Routes.tsx`, `src/features/transit/`, `api/` |
+| 평소와의 비교 | 오늘 길 상황을 알아도 평소보다 심각한 건지 판단하기 어렵다. | `scripts/collect/`, `src/features/baseline/` |
+| 내 경로·시간에 맞는 알림 | 나와 상관없는 교통 알림이 많아 정작 필요한 정보를 놓치기 쉽다. | `src/engine/` |
+| 이유가 보이는 알림 (변화, 비교, 권장 행동, 출처) | 길에 문제가 생겼다는 사실을 알아도 얼마나 일찍 출발해야 할지, 어떻게 대처해야 할지 막막하다. | `src/pages/NoticeDetail.tsx` |
+| 대안 경로 추천 | 평소 다니던 길에 문제가 생기면 막히는 구간을 피해 갈 다른 길을 직접 찾아야 한다. | `src/features/transit/recommendation.ts`, `src/features/transit/RoutingAdvice.tsx` |
+| 알림 피드백 | 나에게 중요하지 않은 알림이 반복되어도 필요한 알림만 받도록 조정하기 어렵다. | `src/state/`, `src/engine/threshold.ts` |
+| 현재 지역 신호 (강남역, 여의도) | 지금 주변의 날씨, 미세먼지, 인파 같은 상황이 평소와 어떤지 따로 찾아봐야 한다. | `src/pages/Home.tsx`, `api/` |
+| 이웃 제보와 포인트 | 집이나 회사 근처의 갑작스러운 공사·혼잡처럼 공공데이터에 없는 상황은 미리 알기 어렵다. | `src/features/reports/`, `src/features/points/` |
+| 키로와 오늘 평범도 | 알림이 없는 날, 정말 아무 문제가 없는 건지 알기 어렵다. | `src/pages/Home.tsx`, `src/pages/KiroRoom.tsx` |
 
 기능별 구현 상태는 [평가·데이터·구현 현황](docs/EVALUATION.md)에 있습니다.
 
