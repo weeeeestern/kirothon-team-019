@@ -37,6 +37,11 @@
   const heartEye = (x) =>
     `<path d="M${x} ${EY + 44}C${x - 60} ${EY} ${x - 42} ${EY - 48} ${x} ${EY - 18}C${x + 42} ${EY - 48} ${x + 60} ${EY} ${x} ${EY + 44}Z" fill="${EYE_INK}"/>`;
 
+  const GLASSES_FRAME =
+      pair((x) => `<circle cx="${x}" cy="${EY}" r="66" fill="none" stroke="${INK}" stroke-width="16" stroke-linecap="round"/>`) +
+      `<path d="M${EL + 66} ${EY}L${ER - 66} ${EY}" stroke="${INK}" stroke-width="14" stroke-linecap="round"/>` +
+      `<path d="M${EL - 66} ${EY - 10}l-46-26" stroke="${INK}" stroke-width="14" stroke-linecap="round"/>`;
+
   const EYES = {
     canon: CANON,
     closed: pair((x) => lid(x, -52)),
@@ -49,11 +54,7 @@
     visor:
       `<rect x="${EL - 52}" y="${EY - 50}" width="${ER - EL + 104}" height="100" rx="50" fill="${EYE_INK}"/>` +
       `<rect x="${EL - 22}" y="${EY - 26}" width="34" height="20" rx="10" fill="${WHITE}" opacity="0.85"/>`,
-    glasses:
-      CANON +
-      pair((x) => `<circle cx="${x}" cy="${EY}" r="66" fill="none" stroke="${INK}" stroke-width="16" stroke-linecap="round"/>`) +
-      `<path d="M${EL + 66} ${EY}L${ER - 66} ${EY}" stroke="${INK}" stroke-width="14" stroke-linecap="round"/>` +
-      `<path d="M${EL - 66} ${EY - 10}l-46-26" stroke="${INK}" stroke-width="14" stroke-linecap="round"/>`,
+    glasses: CANON + GLASSES_FRAME,
     cross:
       `<path d="M${EL - 38} ${EY - 34}l76 34-76 34z" fill="${EYE_INK}"/>` +
       `<path d="M${ER + 38} ${EY - 34}l-76 34 76 34z" fill="${EYE_INK}"/>`,
@@ -399,17 +400,21 @@
   // Custom artwork can occupy the same space as a hat or a handheld prop.
   const CUSTOM_SLOTS = { raincoat: "head", bikehelmet: "head", umbrella: "hand", placard: "hand" };
 
-  function appearance(situation, fit, expr) {
-    const slots = new Set((situation?.custom || []).map(name => CUSTOM_SLOTS[name]).filter(Boolean));
-    const hasHat = situation && situation.accessory !== "none";
-    const hasProp = situation && situation.prop !== "none";
+  function appearance(situation, fit, expr, preferOutfit) {
+    // Home can keep the user's selected costume in occupied slots. Other
+    // previews retain the default situation-first appearance.
+    const primary = preferOutfit && fit ? fit : situation;
+    const secondary = preferOutfit && fit ? situation : fit;
+    const slots = new Set((primary?.custom || []).map(name => CUSTOM_SLOTS[name]).filter(Boolean));
+    const hasHat = primary?.accessory && primary.accessory !== "none";
+    const hasProp = primary?.prop && primary.prop !== "none";
     if (hasHat) slots.add("head");
     if (hasProp) slots.add("hand");
-    const fitCustom = (fit?.custom || []).filter(name => !slots.has(CUSTOM_SLOTS[name]));
-    const custom = [...new Set([...fitCustom, ...(situation?.custom || []), ...(expr?.custom || [])])];
+    const secondaryCustom = (secondary?.custom || []).filter(name => !slots.has(CUSTOM_SLOTS[name]));
+    const custom = [...new Set([...secondaryCustom, ...(primary?.custom || []), ...(expr?.custom || [])])];
     return {
-      accessory: hasHat ? situation.accessory : (!slots.has("head") && fit?.accessory) || "none",
-      prop: hasProp ? situation.prop : (!slots.has("hand") && fit?.prop) || "none",
+      accessory: hasHat ? primary.accessory : (!slots.has("head") && secondary?.accessory) || "none",
+      prop: hasProp ? primary.prop : (!slots.has("hand") && secondary?.prop) || "none",
       // Paint clothing before face accessories, regardless of which layer supplied it.
       custom: custom.includes("raincoat") ? ["raincoat", ...custom.filter(name => name !== "raincoat")] : custom,
     };
@@ -431,11 +436,12 @@
     const fit = o.outfit && OUTFITS[o.outfit] ? OUTFITS[o.outfit] : null;
     const base = expr || sit;
     const activeSituation = sit !== SITUATIONS.ordinary ? sit : null;
-    // An alert keeps its equipment and color even during a celebration or sleep.
-    // Wardrobe previews still show only the chosen outfit on an ordinary day.
-    const look = appearance(activeSituation || (!fit && !expr ? sit : null), fit, expr);
+    const preferOutfit = !!o.preferOutfit && !!fit && o.outfit !== "base";
+    const look = appearance(activeSituation || (!fit && !expr ? sit : null), fit, expr, preferOutfit);
+    // Frames are clothing, not an expression: preserve them above changing eyes.
+    const glassesOverlay = preferOutfit && fit.eyes === "glasses" && o.eyes !== "glasses";
     const face = expr || activeSituation;
-    const eyes = o.eyes || face?.eyes || fit?.eyes || (fit ? "canon" : base.eyes);
+    const eyes = o.eyes || face?.eyes || (!glassesOverlay && fit?.eyes) || (fit ? "canon" : base.eyes);
     const brows = o.brows || face?.brows || (fit ? "none" : base.brows || "none");
     const mouth = o.mouth || face?.mouth || fit?.mouth || (fit ? "none" : base.mouth);
     const accessory = o.accessory || look.accessory;
@@ -494,6 +500,7 @@
       <g class="kiro-hat kiro-hat-${accessory}">${ACCESSORIES[accessory] || ""}</g>
       <g class="kiro-prop">${PROPS[propName] || ""}</g>
       ${customs(uid, custom)}
+      ${glassesOverlay ? `<g class="kiro-glasses-frame">${GLASSES_FRAME}</g>` : ""}
     `;
 
     const svg = `

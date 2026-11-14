@@ -6,11 +6,12 @@ import { situationColor } from '@/theme/situation';
 import { PageHeader } from '@/components/PageHeader';
 import { KiroAvatar } from '@/components/KiroAvatar';
 import type { Notice } from '@/engine';
+import { DEMO_ROUTE } from '@/state/demo';
 function NoticeCard({ notice }: { notice: Notice }) {
   const { store, dispatch, celebrate } = useApp(); const t = situationColor(notice.situation); const fed = Object.hasOwn(store.feedback, notice.id);
   const max = Math.max(notice.baselineValue, notice.currentValue, 1);
   const report = store.reports.find(r => r.id === notice.anomalyId);
-  const route = store.routes.find(r => r.id === notice.routeId);
+  const route = store.routes.find(r => r.id === notice.routeId) ?? (notice.routeId === DEMO_ROUTE.id ? DEMO_ROUTE : undefined);
   function feedback(value: 'helpful' | 'notNeeded') { if (fed) return; dispatch({ type: 'feedback', id: notice.id, value }); celebrate('joy'); Toast.show('피드백 고마워요. +1 P 적립했어요'); }
   return <article className="card notice-card"><div className="row between"><Tag style={{ '--background-color': t.bg, '--text-color': t.accent, '--border-color': 'transparent' }}>{t.label}</Tag><span className="caption">{notice.deliverAt} 알림 예정</span></div>
     <p className="caption">{route?.stops[0]} → {route?.stops.at(-1)} · {route?.departAt}</p><h2>{notice.what}</h2><p className="comparison-head" style={{ color: t.accent }}>{notice.delta}</p>

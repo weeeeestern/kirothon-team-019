@@ -16,6 +16,52 @@ const signals = [
 ];
 
 describe('Kiro situation and costume composition', () => {
+  const wornItems = [
+    ['hardhat', '.kiro-hat-hardhat'], ['raincoat', '.kiro-raincoat'],
+    ['mask', '.kiro-mask'], ['bandana', '.kiro-hat-bandana'],
+    ['beanie', '.kiro-hat-beanie'], ['phones', '.kiro-hat-phones'],
+    ['glasses', '.kiro-glasses-frame'], ['crown', '.kiro-hat-crown'],
+    ['marathon26', '.kiro-hat-bandana'],
+  ];
+  it.each(wornItems)('keeps the selected %s costume on Home while mood and weather change', (outfit, selector) => {
+    for (const state of ['construction', 'rain', 'dust']) {
+      for (const expression of [undefined, 'heart', 'surprise', 'sleep']) {
+        const host = avatar({ state, outfit, expression, preferOutfit: true });
+        const reference = avatar({ state, expression });
+        expect(host.querySelectorAll(selector), `${state} ${expression}`).toHaveLength(1);
+        expect(host.querySelector('.kiro-eyes')?.outerHTML).toBe(reference.querySelector('.kiro-eyes')?.outerHTML);
+        expect([...host.querySelectorAll('stop')].map(s => s.getAttribute('stop-color')))
+          .toEqual([...reference.querySelectorAll('stop')].map(s => s.getAttribute('stop-color')));
+        if (state === 'rain') expect(host.querySelector('.kiro-rain-drops')).not.toBeNull();
+        if (state === 'dust') expect(host.querySelector('.kiro-dust')).not.toBeNull();
+      }
+    }
+  });
+
+  it('lets worn clothing own overlapping slots without stacking two hats or props', () => {
+    const hat = avatar({ state: 'construction', outfit: 'crown', preferOutfit: true });
+    expect(hat.querySelector('.kiro-hat-crown')).not.toBeNull();
+    expect(hat.querySelector('.kiro-hat-hardhat')).toBeNull();
+    const coat = avatar({ state: 'construction', outfit: 'raincoat', preferOutfit: true });
+    expect(coat.querySelector('.kiro-raincoat')).not.toBeNull();
+    expect(coat.querySelector('.kiro-hat-hardhat')).toBeNull();
+    expect(coat.querySelector('.kiro-prop')?.innerHTML).toBe('');
+    expect(coat.querySelector('.kiro-umbrella')).not.toBeNull();
+    const rain = avatar({ state: 'rain', outfit: 'phones', preferOutfit: true });
+    expect(rain.querySelector('.kiro-hat-phones')).not.toBeNull();
+    expect(rain.querySelector('.kiro-raincoat')).toBeNull();
+    expect(rain.querySelector('.kiro-umbrella')).not.toBeNull();
+  });
+
+  it('keeps base outfit automatic and renders glasses frames without extra eye artwork', () => {
+    expect(avatar({ state: 'construction', outfit: 'base', preferOutfit: true }).innerHTML)
+      .toBe(avatar({ state: 'construction', outfit: 'base' }).innerHTML);
+    const glasses = avatar({ state: 'ordinary', outfit: 'glasses', expression: 'heart', preferOutfit: true });
+    expect(glasses.querySelector('.kiro-glasses-frame')?.querySelectorAll('circle')).toHaveLength(2);
+    expect(glasses.querySelector('.kiro-eyes-heart')).not.toBeNull();
+    expect(glasses.querySelector('.kiro-eyes-canon, .kiro-eyes-glasses')).toBeNull();
+  });
+
   it.each(Object.keys(window.KiroAvatar.OUTFITS))('preserves every alert with the %s outfit', outfit => {
     for (const [state, ...selectors] of signals) {
       const host = avatar({ state, outfit });
