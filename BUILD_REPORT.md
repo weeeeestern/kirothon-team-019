@@ -49,6 +49,20 @@
 4. **데이터 분리:** 혼잡도 %, 승하차 인원, 대기질 농도를 별도 단위로 다룹니다. 과거 평균을 현재 관측이나 날짜별 분산으로 오인하지 않도록 합니다.
 5. **문서와 구현 일치:** 인프라 steering의 포함 규칙, Vite 공개키와 서버 비밀키 구분, 미완료 작업 상태를 정리했습니다.
 
+## 변경 → 요구사항 → 커밋 추적
+
+변경이 생겼을 때 요구사항 번호를 바꾸거나 추가하고, 같은 커밋에서 코드·테스트와 함께 반영한 사례입니다. 마지막 행은 스펙에 반영하지 않은 예외입니다. 번호는 `.kiro/specs/<스펙>/requirements.md`의 현재 번호이고, 커밋은 `git log`로 확인할 수 있습니다.
+
+| 계기 | 요구사항 | 커밋 | 검증 |
+|---|---|---|---|
+| 제보 설명 글자 수가 디자인 시안과 달라 80자를 100자로 맞춤. 스펙 3종(요구사항·설계·작업)을 같은 커밋에서 수정 | `citizen-report-points` 1.4, `app-ui-kiro` 5.1 | `1f85d61` | 문서 변경, 별도 테스트 없음 |
+| 2026-11-14 사용자 요청으로 길찾기를 범위에 포함. 기존 "길찾기 제공 안 함" 요구사항을 바꾸고 새 요구사항 추가, `product.md` steering도 함께 수정 | `app-ui-kiro` 2.4, 9.1~9.5, `data-and-evaluation` 추가 요구사항 1~4 | `85a1190` | `src/features/transit/RoutePlanner.test.tsx`, `src/features/baseline/publicBaseline.test.ts` |
+| 경로 편집과 해금 안내 흐름을 완성하면서 경유지, 빈 경로 안내, 해금 안내, 홈 착용 반영 요구사항 추가 | `app-ui-kiro` 2.6, 2.7, 6.8, 6.9 (작업 12) | `f2c02c4` | `src/App.test.tsx`의 `saves a route through its form and retains it after remount`, `announces a level unlock once and wears the new outfit on home` 테스트 |
+| 코스튬을 착용하면 이상 상태 장식(마스크·우비 등)이 사라지는 문제. 요구사항 6.10을 추가하고, 같은 커밋에서 설계·작업·코드·테스트를 함께 수정 | `app-ui-kiro` 6.10 | `8e212bd` (PR #2, 머지 `03ccc49`) | `src/components/KiroAvatar.test.ts`, `src/App.test.tsx`의 `keeps situation equipment after wearing a costume and restores it when the alert clears` 테스트 |
+| 키로 렌더러 버그 두 건: Safari에서 몸통이 투명해짐(SVG id 중복), 배포 번들에서 렌더러가 등록되지 않음. 요구사항 6.2("키로는 항상 `KiroAvatar.render`로만 그린다")에 해당하지만 스펙에는 별도 항목을 추가하지 않았음 | `app-ui-kiro` 6.2 | `47e640c`, `2bdd2e8` (`2bdd2e8`은 PR #1) | `scripts/verify-build.mjs`로 배포 번들 점검 추가 |
+
+마지막 행처럼 버그 수정은 요구사항 번호 없이 커밋만 남았습니다. 재발 방지 점검(`verify-build.mjs`)은 있지만 스펙에는 기록하지 않았다는 점이 남은 개선 사항입니다.
+
 ## 제출 자료와 남은 일
 
 - `PRESENTATION.pdf`: 문제·사용 흐름·데이터·엔진·평가·Kiro 산출물·한계를 담은 발표 자료입니다.
