@@ -15,8 +15,11 @@
 | `engine-dev` | 판정 엔진, 번들 데이터, 평가 | `src/engine/`, `src/data/`, `scripts/` |
 | `ui-dev` | 화면, 키로, 상태, 데이터 연결 | `src/pages/`, `src/components/`, `src/theme/`, `src/state/`, `src/features/` |
 | `qa` | 테스트, 스펙 대조, PASS/NEEDS_CHANGES | 테스트 파일, `supabase/tests/`, `qa/` |
+| `security` | 푸시 전 보안 검사(비밀 정보, RLS·RPC, XSS, 입력 검증, 개인정보, 의존성), SECURE/BLOCK | `qa/reports/`만 |
 
-시작: `kiro-cli --agent lead`
+시작: `kiro-cli --agent lead` (비대화형은 `kiro-cli chat --v3 --agent lead --no-interactive ...`. `--v3`가 없으면 V2 엔진이 이 에이전트들을 읽지 못해요)
+
+흐름: lead → backend-dev(계약 먼저) → engine-dev·ui-dev(병렬) → qa(PASS까지) → security(SECURE까지) → push
 
 ## 명령 (Node 20.19 이상)
 ```bash
