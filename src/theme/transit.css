@@ -37,3 +37,12 @@
 .journey-step summary { cursor: pointer; min-height: 44px; display: flex; align-items: center; }
 .journey-detail > .caption { margin-top: var(--pyeongso-space-4); font-size: 11px; }
 .saved-route-details > summary { cursor: pointer; padding-block: var(--pyeongso-space-3); min-height: 44px; color: var(--pyeongso-primary-text); }
+
+.report-map-section { margin-bottom: var(--pyeongso-space-6); }
+.report-map-section h3 { margin-block: var(--pyeongso-space-2); }
+.report-map-filter { display: flex; align-items: center; gap: var(--pyeongso-space-2); min-height: 44px; font-size: 13px; color: var(--pyeongso-text-secondary); }
+.report-map-filter input { width: 20px; height: 20px; accent-color: var(--adm-color-primary); }
+.report-map-marker { min-width: 44px; min-height: 44px; padding: var(--pyeongso-space-2) var(--pyeongso-space-3); border-radius: var(--adm-radius-l); border: 2px solid var(--pyeongso-text); background: var(--adm-color-primary); color: var(--pyeongso-text); font-size: 16px; font-weight: 700; cursor: pointer; }
+.report-map-marker:focus-visible { outline: 3px solid var(--pyeongso-primary-text); outline-offset: 2px; }
+.report-map-item { border-top: 1px solid var(--pyeongso-border); padding-top: var(--pyeongso-space-3); margin-top: var(--pyeongso-space-3); overflow-wrap: anywhere; }
+.report-map-detail .adm-button, .report-map-missing .adm-button { min-height: 44px; }

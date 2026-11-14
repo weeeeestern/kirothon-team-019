@@ -5,6 +5,7 @@ import { PageHeader } from '@/components/PageHeader';
 import { KiroAvatar } from '@/components/KiroAvatar';
 import { REPORT_TYPES, isConfirmed, validReportInput } from '@/features/reports/reportStore';
 import type { ReportType } from '@/features/reports/reportStore';
+import { ReportMap } from '@/features/reports/ReportMap';
 import { situationColor } from '@/theme/situation';
 import { dayKey } from '@/engine/utils';
 import type { Page } from '@/App';
@@ -22,6 +23,7 @@ export function Report({ navigate }: { navigate: (page: Page) => void }) {
     setSituation(undefined); setPlace(''); setNote(''); setError(''); celebrate('proud'); Toast.show('제보를 등록했어요. +10 P 적립했어요');
   }
   return <div className="page"><PageHeader title="동네를 돕는 한마디" subtitle="내가 본 작은 변화가, 이웃의 여유가 돼요" />
+    <ReportMap reports={store.reports} routes={store.routes} now={now} />
     {celebration === 'proud' && <div className="mini-celebration"><KiroAvatar size={120} expression="proud" motion="hop" /><span>고마워요! +10 P</span></div>}
     {!store.routes.length && <section className="card"><h3>먼저 내 경로를 등록해 주세요</h3><p>같은 길을 다니는 이웃에게 소식을 전할 수 있어요.</p><Button block color="primary" onClick={() => navigate('routes')}>경로 등록하기</Button></section>}
     {store.routes.length > 0 && <form onSubmit={e => { e.preventDefault(); submit(); }}><fieldset><legend>어떤 변화인가요?</legend><Selector columns={3} options={REPORT_TYPES.map(value => ({ value, label: situationColor(value).label }))} value={situation ? [situation] : []} onChange={v => setSituation(v[0])} /></fieldset>

@@ -11,11 +11,12 @@ interface MapsApi {
   LatLngBounds: new () => { extend(point: LatLng): void };
   Map: new (element: HTMLElement, options: { center: LatLng; level: number }) => MapInstance;
   Marker: new (options: { position: LatLng; map: MapInstance; title?: string }) => Overlay;
+  CustomOverlay: new (options: { position: LatLng; map: MapInstance; content: HTMLElement; clickable: boolean; yAnchor: number }) => Overlay;
   Polyline: new (options: { map: MapInstance; path: LatLng[]; strokeWeight: number; strokeColor: string; strokeOpacity: number; strokeStyle: string }) => Overlay;
 }
 declare global { interface Window { kakao?: { maps: MapsApi } } }
-interface Marker extends Coordinate { label?: string }
-interface Props { markers: Marker[]; path?: Coordinate[]; pathKind?: 'geometry' | 'stops'; height?: number }
+interface Marker extends Coordinate { label?: string; id?: string; badge?: string }
+interface Props { markers: Marker[]; path?: Coordinate[]; pathKind?: 'geometry' | 'stops'; height?: number; onMarkerSelect?: (id: string) => void; ariaLabel?: string; emptyMessage?: string; caption?: string }
 let sdkPromise: Promise<MapsApi> | undefined;
 
 async function loadSdk(): Promise<MapsApi> {
@@ -48,8 +49,10 @@ async function loadSdk(): Promise<MapsApi> {
   return sdkPromise;
 }
 
-export function KakaoMap({ markers, path = [], pathKind = 'stops', height = 260 }: Props) {
+export function KakaoMap({ markers, path = [], pathKind = 'stops', height = 260, onMarkerSelect, ariaLabel = '선택한 경로의 카카오 지도', emptyMessage = '출발지와 도착지를 선택하면 지도가 나타나요.', caption }: Props) {
   const ref = useRef<HTMLDivElement>(null);
+  const onSelect = useRef(onMarkerSelect);
+  useEffect(() => { onSelect.current = onMarkerSelect; }, [onMarkerSelect]);
   const [status, setStatus] = useState('지도를 불러오고 있어요…');
   const [attempt, setAttempt] = useState(0);
   const [failed, setFailed] = useState(false);
@@ -62,7 +65,7 @@ export function KakaoMap({ markers, path = [], pathKind = 'stops', height = 260 
     const element = ref.current;
     const data = JSON.parse(signature) as { markers: Marker[]; path: Coordinate[]; pathKind: 'geometry' | 'stops' };
     setFailed(false); setStatus('지도를 불러오고 있어요…');
-    if (!data.markers.length) { setStatus('출발지와 도착지를 선택하면 지도가 나타나요.'); return; }
+    if (!data.markers.length) { setStatus(emptyMessage); return; }
     loadSdk().then(maps => {
       if (cancelled || !element) return;
       const first = data.markers[0];
@@ -70,22 +73,28 @@ export function KakaoMap({ markers, path = [], pathKind = 'stops', height = 260 
       const bounds = new maps.LatLngBounds();
       data.markers.forEach(marker => {
         const position = new maps.LatLng(marker.lat, marker.lng);
-        overlays.push(new maps.Marker({ map, position, title: marker.label }));
+        if (marker.id && marker.badge) {
+          const button = document.createElement('button');
+          button.type = 'button'; button.className = 'report-map-marker';
+          button.textContent = marker.badge; button.setAttribute('aria-label', marker.label ?? '제보 보기');
+          button.onclick = () => onSelect.current?.(marker.id!);
+          overlays.push(new maps.CustomOverlay({ map, position, content: button, clickable: true, yAnchor: 1 }));
+        } else overlays.push(new maps.Marker({ map, position, title: marker.label }));
         bounds.extend(position);
       });
       if (data.path.length > 1) {
         const coordinates = data.path.map(point => { const value = new maps.LatLng(point.lat, point.lng); bounds.extend(value); return value; });
         overlays.push(new maps.Polyline({ map, path: coordinates, strokeWeight: 5, strokeColor: '#8B4DFF', strokeOpacity: .8, strokeStyle: data.pathKind === 'geometry' ? 'solid' : 'shortdash' }));
       }
-      map.setBounds(bounds);
-      if (typeof ResizeObserver !== 'undefined') { observer = new ResizeObserver(() => { map.relayout(); map.setBounds(bounds); }); observer.observe(element); }
+      if (data.markers.length > 1 || data.path.length > 1) map.setBounds(bounds);
+      if (typeof ResizeObserver !== 'undefined') { observer = new ResizeObserver(() => { map.relayout(); if (data.markers.length > 1 || data.path.length > 1) map.setBounds(bounds); }); observer.observe(element); }
       setStatus('');
     }).catch(error => { if (!cancelled) { setStatus(error instanceof Error ? error.message : '지도를 불러오지 못했어요.'); setFailed(true); } });
     return () => { cancelled = true; observer?.disconnect(); overlays.forEach(overlay => overlay.setMap(null)); if (element) element.replaceChildren(); };
-  }, [signature, attempt]);
+  }, [signature, attempt, emptyMessage]);
   return <div className="transit-map-wrap">
-    <div ref={ref} className="transit-map" style={{ height }} aria-label="선택한 경로의 카카오 지도" />
+    <div ref={ref} className="transit-map" style={{ height }} aria-label={ariaLabel} />
     {status && <div className="transit-map-status" role="status"><p>{status}</p>{failed && <button type="button" onClick={() => setAttempt(n => n + 1)}>지도 다시 불러오기</button>}</div>}
-    {!status && <p className="caption">{path.length < 2 ? '카카오맵 · 선택한 장소의 위치예요. 이동 경로는 길찾기 후 표시해요.' : pathKind === 'geometry' ? '카카오맵 · ODsay 이동 경로' : '카카오맵 · 점선은 경유지 연결이며 실제 도로 모양과 달라요.'}</p>}
+    {!status && <p className="caption">{caption ?? (path.length < 2 ? '카카오맵 · 선택한 장소의 위치예요. 이동 경로는 길찾기 후 표시해요.' : pathKind === 'geometry' ? '카카오맵 · ODsay 이동 경로' : '카카오맵 · 점선은 경유지 연결이며 실제 도로 모양과 달라요.')}</p>}
   </div>;
 }
