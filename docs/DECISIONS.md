@@ -1,0 +1,34 @@
+# 결정 기록 (DECISIONS)
+
+작업을 이어가기 전에 이 파일을 먼저 읽어요. 새로 정한 것은 맨 아래 해당 절에 한 줄씩 추가해요. 형식: `- [날짜] 결정 — 이유 (근거 파일)`
+
+## 제품
+- [11-14] 서비스 이름은 "잠잠" — 팀 합의 (README, docs/PRD.md)
+- [11-14] 판정(runDay), 경로, 출발 시각, 임계값은 브라우저에만 둔다 — 개인 이동 정보를 서버로 보내지 않기 위해 (.kiro/steering/api-contract.md)
+- [11-14] 제보·확인·도움됨·포인트만 Supabase로 옮긴다 — "서로 다른 사용자 2명 확인"은 localStorage로 불가능, 포인트 조작 방지 (.kiro/specs/supabase-backend/requirements.md)
+- [11-14] Supabase 환경변수가 없으면 localStorage 데모 모드로 동작 — 발표 데모 안정성 (api-contract.md)
+- [11-14] 사용자 식별은 Supabase 익명 로그인만 — 이메일·전화·위치 미수집 (product.md)
+- [11-14] 이상이 있는 날은 상황 의상이 착용 옷보다 우선, 옷장에서 상황 의상(hardhat, raincoat, mask, bandana) 제거 — 팀 피드백 (app-ui-kiro 요구사항 6.10~6.12)
+
+## 디자인
+- [11-14] UI는 antd-mobile v5, 아이콘은 @ant-design/icons — 모바일 앱 화면 (design/DESIGN.md)
+- [11-14] 간격은 4, 8, 12, 16, 20, 24, 32, 40px 단계만 (DESIGN.md 4장)
+
+## Kiro 운영
+- [11-14] 에이전트 6개: lead, backend-dev, engine-dev, ui-dev, qa, security (.kiro/agents/, AGENTS.md)
+- [11-14] 흐름: lead → backend-dev(계약 먼저) → engine-dev·ui-dev → qa(PASS) → security(SECURE) → push
+- [11-14] 비대화형 실행은 `kiro-cli chat --v3 ...` — V2 엔진은 permissions가 있는 에이전트를 읽지 못함(오류 "Mode not found")
+- [11-14] 각 에이전트 쓰기 범위는 `fs_write deny ** exclude <허용 경로>`로 강제 — 실제 시험에서 `--trust-tools=fs_write`보다 deny가 이김 확인
+- [11-14] tasks.md 체크박스는 qa만 바꾼다 — 확인 안 된 체크 방지
+- [11-14] 커밋·푸시 전 `.kiro/hooks/git-guard.json`(PreToolUse)이 .env·키 문자열·--force를 종료 코드 2로 차단
+- [11-14] 컨텍스트 40%에서 자동 압축, 압축 전후 훅이 상태를 저장하고 이 파일을 다시 읽게 함 (.kiro/settings/cli.json, .kiro/hooks/compaction.json)
+
+## Git
+- [11-14] 작업 브랜치는 `feat/supabase-subagents`, main에 직접 푸시하지 않는다
+- [11-14] 커밋 작성자는 stclab-done (noreply 이메일), git config는 바꾸지 않는다
+- [11-14] 발표자료(~/Downloads/pyeongso-pitch)는 레포에 올리지 않는다
+
+## 진행 상태
+- [11-14] 완료: app-ui-kiro 작업 13 (lead → ui-dev → qa PASS, 커밋 9d7cdd5)
+- [11-14] 진행 중: supabase-backend 작업 1~5는 서브에이전트가 작성(미커밋), 작업 6(qa 연결 검증과 전체 검토)부터 다시 시작해야 함. 7(Edge Function)은 보류
+- [11-14] 남은 일: 6 완료 → security 검사 → 커밋·푸시 → BUILD_REPORT.md에 위임 근거 기록
