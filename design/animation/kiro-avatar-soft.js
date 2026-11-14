@@ -182,7 +182,7 @@
       if (name === "raincoat") {
         out.push(`
           <g class="kiro-custom kiro-raincoat">
-            <g clip-path="url(#${uid}-body)">
+            <g clip-path="url(#${uid}-bodyclip)">
               <path d="M250 600C430 470 700 460 940 540V1020H250Z" fill="#F8D98A"/>
               <path d="M618 548V920" stroke="#C9A86A" stroke-width="10" stroke-linecap="round" opacity="0.45"/>
               <circle cx="618" cy="630" r="12" fill="#C9A86A"/>
@@ -478,7 +478,6 @@
     ${bodyShade}
     ${showTile ? `<clipPath id="${uid}-tileclip"><rect width="1200" height="1200" rx="${rx}"/></clipPath>` : ""}
     <clipPath id="${uid}-bodyclip"><path d="${BODY}"/></clipPath>
-    <clipPath id="${uid}-body"><path d="${BODY}"/></clipPath>
   </defs>
   <g ${showTile ? `clip-path="url(#${uid}-tileclip)"` : ""}>
     ${showTile ? `<rect class="kiro-tile" width="1200" height="1200" rx="${rx}" fill="url(#${uid}-tile)"/>` : ""}
