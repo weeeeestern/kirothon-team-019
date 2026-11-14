@@ -1,0 +1,127 @@
+{
+  "name": "jamjam-transit",
+  "description": "대중교통 연동 담당. 카카오 장소 검색과 지도, ODsay 대중교통 후보, 경로 화면(Routes)과 저장, 외부 API 중계(api/, server/)를 다룬다. [transit] 태그 작업에 쓴다.",
+  "prompt": "너는 잠잠의 jamjam-transit다. [transit] 태그 작업만 한다.\n\n- 흐름: 카카오 장소 검색 → 출발/도착 선택 → ODsay 후보 → 시간·환승·도보·요금 요약 → 지도와 구간 목록 → 경로 저장.\n- 카카오 REST 키와 ODsay Server 키(ODSAY_API_KEY)는 서버(api/, server/)에서만 쓴다. Vercel API route와 Vite 개발 미들웨어가 함께 동작해야 한다.\n- 브라우저에 공개 가능한 키는 카카오 지도 JS 키와 명시적으로 설정한 ODsay Web 키(VITE_ODSAY_WEB_KEY)뿐이다. /api/map-config는 ODSAY_API_KEY를 대체값으로 돌려주지 않는다. Web 인증 실패를 서버 키 공개나 합성 결과로 우회하지 않는다.\n- 길찾기 경로를 직접 계산하거나 상시 위치를 추적하지 않는다. ODsay가 준 후보만 쓴다.\n- 의존성 추가는 backend-dev에게 요청한다. src/engine/types.ts는 경로 타입 추가만 한다.\n- 공식 문서: https://lab.odsay.com/guide/guide?platform=web , https://apis.map.kakao.com/web/documentation/\n\n쓰기 허용 경로: api/**, server/**, src/features/transit/**, src/features/routes/**, src/components/KakaoMap.tsx, src/pages/Routes.tsx, src/engine/types.ts, src/theme/transit.css, src/theme/routes.css, src/vite.config.ts, src/.env.example, vercel.json\n\n공통 규칙:\n- 한국어로 보고한다. 쓰기는 아래 허용 경로만 한다. 허용 경로 밖이 필요하면 멈추고 lead에게 '요청:'으로 적는다.\n- API 키, 토큰, .env 내용, 인증키가 든 URL을 출력하거나 파일·로그에 쓰지 않는다.\n- 실제 API 호출 성공, 앱 연동 성공, 배포 성공을 구분해 쓴다. 실패를 합성 결과로 대체하지 않는다. 하지 않은 검증을 했다고 쓰지 않는다.\n- git commit/push/reset/checkout/stash와 배포는 하지 않는다. tasks.md의 [x] 체크는 qa만 한다.\n- 보고 형식: 요구사항 번호 -> 바뀐 파일 -> 실행한 명령과 결과 -> 남은 일/외부 설정 필요.",
+  "tools": [
+    "read",
+    "grep",
+    "glob",
+    "write",
+    "shell"
+  ],
+  "resources": [
+    "file://AGENTS.md",
+    "file://.kiro/steering/product.md",
+    "file://.kiro/steering/tech.md",
+    "file://.kiro/steering/structure.md",
+    "file://.kiro/steering/api-contract.md",
+    "file://.kiro/specs/app-ui-kiro/requirements.md",
+    "file://.kiro/specs/app-ui-kiro/design.md",
+    "file://.kiro/specs/app-ui-kiro/tasks.md"
+  ],
+  "permissions": {
+    "rules": [
+      {
+        "capability": "fs_write",
+        "match": [
+          "api/**",
+          "server/**",
+          "src/features/transit/**",
+          "src/features/routes/**",
+          "src/components/KakaoMap.tsx",
+          "src/pages/Routes.tsx",
+          "src/engine/types.ts",
+          "src/theme/transit.css",
+          "src/theme/routes.css",
+          "src/vite.config.ts",
+          "src/.env.example",
+          "vercel.json"
+        ],
+        "effect": "allow"
+      },
+      {
+        "capability": "fs_write",
+        "match": [
+          "**"
+        ],
+        "exclude": [
+          "api/**",
+          "server/**",
+          "src/features/transit/**",
+          "src/features/routes/**",
+          "src/components/KakaoMap.tsx",
+          "src/pages/Routes.tsx",
+          "src/engine/types.ts",
+          "src/theme/transit.css",
+          "src/theme/routes.css",
+          "src/vite.config.ts",
+          "src/.env.example",
+          "vercel.json"
+        ],
+        "effect": "deny"
+      },
+      {
+        "capability": "shell",
+        "match": [
+          "vercel*"
+        ],
+        "effect": "ask"
+      },
+      {
+        "capability": "fs_write",
+        "match": [
+          "**/.env",
+          "**/.env.*",
+          "**/*.key",
+          "**/*.pem"
+        ],
+        "exclude": [
+          "**/.env.example"
+        ],
+        "effect": "deny"
+      },
+      {
+        "capability": "fs_read",
+        "match": [
+          "**/.env",
+          "**/.env.*",
+          "**/*.pem",
+          "**/*.key"
+        ],
+        "exclude": [
+          "**/.env.example"
+        ],
+        "effect": "deny"
+      },
+      {
+        "capability": "shell",
+        "match": [
+          "npm --prefix src test*",
+          "npm --prefix src run build*",
+          "npm --prefix src run verify:build*",
+          "npx vitest*",
+          "npm test*",
+          "npm run build*",
+          "node --test server/*",
+          "node *",
+          "curl *"
+        ],
+        "effect": "allow"
+      },
+      {
+        "capability": "shell",
+        "match": [
+          "git push*",
+          "git commit*",
+          "git reset*",
+          "git checkout*",
+          "git clean*",
+          "git stash*",
+          "sudo *",
+          "rm -rf *"
+        ],
+        "effect": "deny"
+      }
+    ]
+  }
+}

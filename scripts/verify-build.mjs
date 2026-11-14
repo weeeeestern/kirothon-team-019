@@ -29,7 +29,12 @@ try {
   // Execute the built bundle without test-setup preloading of the avatar.
   // This catches production module interop failures that dev-mode tests miss.
   for (const [, src] of scripts) {
-    dom.window.eval(readFileSync(new URL(src.replace(/^\//, ''), dist), 'utf8'));
+    // jsdom evaluates classic scripts; Vite's lazy-chunk helper contains
+    // import.meta.url even before a lazy section is opened. Supply that single
+    // module value for this home-render check. Real module loading is checked
+    // separately in a browser against the production preview.
+    const source = readFileSync(new URL(src.replace(/^\//, ''), dist), 'utf8');
+    dom.window.eval(source.replaceAll('import.meta', `({url:${JSON.stringify(new URL(src, dom.window.location.href).href)}})`));
   }
   for (let i = 0; i < 40; i++) {
     if (errors.length || dom.window.document.querySelector('#root .hero')) break;

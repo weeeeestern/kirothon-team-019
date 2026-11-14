@@ -5,13 +5,13 @@
       "name": "압축 전 상태 저장",
       "trigger": "PreCompact",
       "description": "대화 압축 직전에 브랜치·커밋·변경 파일을 .kiro/compaction/에 저장하고, docs/DECISIONS.md를 갱신하라고 알린다",
-      "action": { "type": "command", "command": "bash .kiro/hooks/scripts/pre-compact.sh", "timeout": 30 }
+      "action": { "type": "command", "command": "bash .kiro/scripts/pre-compact.sh", "timeout": 30 }
     },
     {
       "name": "압축 후 결정 기록 다시 읽기",
       "trigger": "PostCompact",
       "description": "압축 요약을 .kiro/compaction/에 보관하고, docs/DECISIONS.md와 직전 상태를 읽고 이어가라고 알린다",
-      "action": { "type": "command", "command": "bash .kiro/hooks/scripts/post-compact.sh", "timeout": 30 }
+      "action": { "type": "command", "command": "bash .kiro/scripts/post-compact.sh", "timeout": 30 }
     }
   ]
 }

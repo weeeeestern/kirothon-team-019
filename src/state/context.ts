@@ -3,7 +3,7 @@ import type { Dispatch } from 'react';
 import type { EngineResult } from '@/engine';
 import type { Store, Action } from './store';
 
-export type DemoMode = 'quiet' | 'congestion' | 'construction' | 'rain' | 'dust' | 'marathon' | 'strike';
+export type DemoMode = 'auto' | 'showcase' | 'quiet' | 'congestion' | 'construction' | 'rain' | 'dust' | 'marathon' | 'strike';
 export interface AppCtx { store: Store; dispatch: Dispatch<Action>; result: EngineResult; points: number; mode: DemoMode; setMode: (v: DemoMode) => void; now: Date; day: Date; storageError: boolean; unread: number; celebration: string; celebrate: (v: string) => void;
   /** reportsApi.mode === 'remote' */ remote: boolean;
   /** 서버 호출이 실패했으면 true ("연결이 불안정해요" 안내용) */ apiError: boolean;

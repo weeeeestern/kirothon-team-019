@@ -7,11 +7,12 @@ import { situationColor } from '@/theme/situation';
 import { PageHeader } from '@/components/PageHeader';
 import { KiroAvatar } from '@/components/KiroAvatar';
 import type { Notice } from '@/engine';
+import { DEMO_ROUTE } from '@/state/demo';
 function NoticeCard({ notice }: { notice: Notice }) {
   const { store, dispatch, celebrate, remote, call, refresh } = useApp(); const t = situationColor(notice.situation); const fed = Object.hasOwn(store.feedback, notice.id);
   const max = Math.max(notice.baselineValue, notice.currentValue, 1);
   const report = store.reports.find(r => r.id === notice.anomalyId);
-  const route = store.routes.find(r => r.id === notice.routeId);
+  const route = store.routes.find(r => r.id === notice.routeId) ?? (notice.routeId === DEMO_ROUTE.id ? DEMO_ROUTE : undefined);
   async function feedback(value: 'helpful' | 'notNeeded') {
     if (fed) return;
     if (remote && (await call(() => reportsApi.recordFeedback(notice.id))) === undefined) return;

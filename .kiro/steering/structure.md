@@ -9,15 +9,20 @@ inclusion: always
 ```
 .kiro/
   specs/            기능별 requirements, design, tasks
-  steering/         product, tech, structure, design-system
+  steering/         product, tech, structure, design-system, infra
+  agents/           lead 1개 + 담당 8개 (목록과 쓰기 경로는 AGENTS.md)
+  hooks/            guard-pretool(PreToolUse), compaction, 저장 시 점검
+  settings/         cli.json (자동 압축 40%)
+api/                Vercel API 핸들러 (jamjam-transit)
+server/             서버 전용 외부 API 중계 (jamjam-transit)
 design/             화면 시안, DESIGN.md, 키로 렌더러(animation/)
-docs/               PLANNING.md, PRD.md, 기능명세서.xlsx
+docs/               PLANNING.md, PRD.md, DECISIONS.md, 기능명세서.xlsx
 data/SOURCES.md     데이터 소스 검증 기록
 supabase/           migrations/, functions/, tests/ (backend-dev)
 qa/                 scenarios.md, reports/ (qa)
 AGENTS.md           에이전트 목록과 명령
 scripts/
-  collect/          (예정) 소스별 수집 스크립트
+  collect/          공공데이터 수집·정제 (jamjam-data)
   eval/             합성 시나리오 생성과 평가
 src/
   main.tsx, App.tsx
@@ -25,9 +30,13 @@ src/
   theme/            theme.css, situation.ts
   engine/           판정 엔진 (순수 TypeScript)
   features/
+    transit/        장소·길찾기 계약과 화면 (jamjam-transit)
+    routes/         경로 모델 (jamjam-transit)
+    baseline/       실제 공공데이터 기준선 조회 (jamjam-data)
+    live/           현재 지역 신호 (ui-dev)
     reports/        제보 저장, 신뢰도 검증, Anomaly 변환
     points/         ledger, 레벨, 해금
-  data/             번들 JSON, synthetic/, evaluation.json
+  data/             번들 JSON, public/, synthetic/, evaluation.json
   pages/            Home, NoticeDetail, Report, KiroRoom, Routes, Eval
   components/       KiroAvatar 등 직접 만드는 컴포넌트
   state/            AppState (Context + localStorage)

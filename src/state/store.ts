@@ -7,12 +7,14 @@ import type { CitizenReport } from '../features/reports/reportStore';
 import { award, totalPoints, levelFor, OUTFITS } from '../features/points/ledger';
 import type { PointEntry } from '../features/points/ledger';
 import routesRaw from '../data/synthetic/routes.json';
+import { DEMO_POINT_PREFIX, DEMO_ROUTE } from './demo';
 
 export const STORAGE_KEY = 'jamjam.v1';
 export type Feedback = 'helpful' | 'notNeeded';
 export interface Store {
   version: 1; routes: Route[]; threshold: number; feedback: Record<string, Feedback>;
   reports: CitizenReport[]; ledger: PointEntry[]; read: string[]; outfit: string; unlocked: string[];
+  demoEnabled?: boolean;
 }
 export function initialStore(): Store {
   return { version: 1, routes: structuredClone(routesRaw.items) as Route[], threshold: DEFAULT_THRESHOLD, feedback: {}, reports: [], ledger: [], read: [], outfit: 'base', unlocked: [] };
@@ -24,6 +26,7 @@ export function restoreStore(raw: string | null): Store {
   try {
     const s = JSON.parse(raw ?? 'null') as Store;
     if (!s || s.version !== 1 || !Array.isArray(s.routes) || !s.routes.every(validRoute) || !Number.isFinite(s.threshold) || s.threshold < .5 || s.threshold > 3) return initialStore();
+    if (s.demoEnabled !== undefined && typeof s.demoEnabled !== 'boolean') return initialStore();
     if (!s.feedback || Array.isArray(s.feedback) || typeof s.feedback !== 'object' || !Object.values(s.feedback).every(v => v === 'helpful' || v === 'notNeeded')) return initialStore();
     const strings = (a: unknown): a is string[] => Array.isArray(a) && a.every(x => typeof x === 'string');
     if (!strings(s.read) || !strings(s.unlocked)) return initialStore();
@@ -37,6 +40,7 @@ export function canWear(s: Store, id: string): boolean {
   return !!item && (levelFor(totalPoints(s.ledger)) >= item.level || s.unlocked.includes(id));
 }
 export type Action =
+  | { type: 'loadDemo' | 'clearDemo' }
   | { type: 'route'; route: Route }
   | { type: 'deleteRoute'; id: string }
   | { type: 'feedback'; id: string; value: Feedback }
@@ -50,6 +54,22 @@ export type Action =
 export interface RemoteReport { id: string; situation: CitizenReport['situation']; place: string; time: string; note: string; confirmations: number; isMine: boolean }
 export function reducer(s: Store, a: Action): Store {
   switch (a.type) {
+    case 'loadDemo': {
+      if (s.demoEnabled && s.routes.some(r => r.id === DEMO_ROUTE.id)) return s;
+      let ledger = s.ledger;
+      for (let i = 0; i < 10; i++) ledger = award(ledger, { id: `${DEMO_POINT_PREFIX}${i}`, amount: 10, reason: '시연 포인트' });
+      return { ...s, demoEnabled: true, ledger,
+        routes: s.routes.some(r => r.id === DEMO_ROUTE.id) ? s.routes : [...s.routes, structuredClone(DEMO_ROUTE)],
+        read: s.read.filter(id => !id.includes(`:${DEMO_ROUTE.id}:`)),
+      };
+    }
+    case 'clearDemo': {
+      const next = { ...s, demoEnabled: false,
+        routes: s.routes.filter(r => r.id !== DEMO_ROUTE.id),
+        ledger: s.ledger.filter(entry => !entry.id.startsWith(DEMO_POINT_PREFIX)),
+      };
+      return { ...next, outfit: canWear(next, next.outfit) ? next.outfit : 'base' };
+    }
     case 'route': {
       if (!validRoute(a.route)) return s;
       const route = { ...a.route, stops: a.route.stops.map(stop => stop.trim()) };

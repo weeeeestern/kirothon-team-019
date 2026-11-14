@@ -1,0 +1,48 @@
+.route-search-intro { border: 1px solid var(--pyeongso-primary); background: var(--pyeongso-surface-brand); }
+.route-search-intro h3 { font-size: 19px; }
+.route-search-intro .adm-button { margin-top: var(--pyeongso-space-4); }
+.transit-popup { max-height: 92dvh; overflow-y: auto; }
+.transit-popup-content { max-width: 480px; margin-inline: auto; padding-bottom: calc(var(--pyeongso-space-8) + env(safe-area-inset-bottom)); }
+.route-planner > .caption { margin: var(--pyeongso-space-3) 0; }
+.place-field { position: relative; }
+.place-field .field { margin-bottom: var(--pyeongso-space-2); }
+.place-field > .adm-button { width: 100%; }
+.place-selected { padding: var(--pyeongso-space-3); margin-top: var(--pyeongso-space-2); border-radius: var(--adm-radius-s); background: var(--pyeongso-surface-brand); color: var(--pyeongso-primary-text); }
+.place-selected small { display: block; color: var(--pyeongso-text-secondary); }
+.place-results { list-style: none; padding: 0; margin: var(--pyeongso-space-2) 0; border: 1px solid var(--pyeongso-border); border-radius: var(--adm-radius-m); overflow: hidden; }
+.place-results button { display: flex; flex-direction: column; width: 100%; padding: var(--pyeongso-space-3); min-height: 60px; text-align: left; background: var(--pyeongso-surface); border: 0; border-bottom: 1px solid var(--pyeongso-border); color: var(--pyeongso-text); }
+.place-results span { color: var(--pyeongso-text-secondary); font-size: 12px; }
+.route-planner > .adm-button { margin-top: var(--pyeongso-space-5); }
+.manual-fallback { margin-top: var(--pyeongso-space-6); padding-top: var(--pyeongso-space-4); border-top: 1px solid var(--pyeongso-border); }
+.manual-fallback .adm-button { margin-top: var(--pyeongso-space-3); }
+.journey-options { display: grid; gap: var(--pyeongso-space-3); margin-block: var(--pyeongso-space-5); }
+.journey-option { padding: var(--pyeongso-space-4); color: var(--pyeongso-text); background: var(--pyeongso-surface); text-align: left; border: 1px solid var(--pyeongso-border); border-radius: var(--adm-radius-m); }
+.journey-option.selected { background: var(--pyeongso-surface-brand); border-color: var(--pyeongso-primary); }
+.journey-summary { display: flex; align-items: baseline; flex-wrap: wrap; gap: var(--pyeongso-space-2); font-size: 13px; padding-block: var(--pyeongso-space-2); }
+.journey-summary strong { font-size: 26px; color: var(--pyeongso-primary-text); margin-right: var(--pyeongso-space-2); }
+.journey-lines { font-size: 13px; overflow-wrap: anywhere; }
+.transit-map-wrap { position: relative; margin-block: var(--pyeongso-space-4); }
+.transit-map { width: 100%; border-radius: var(--adm-radius-m); overflow: hidden; background: var(--pyeongso-surface); }
+.transit-map-status { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: var(--pyeongso-space-5); text-align: center; border: 1px dashed var(--pyeongso-border); border-radius: var(--adm-radius-m); background: var(--pyeongso-surface); }
+.transit-map-status button { min-height: 44px; margin-top: var(--pyeongso-space-3); color: var(--pyeongso-primary-text); background: transparent; border: 1px solid var(--pyeongso-primary); border-radius: var(--adm-radius-s); }
+.transit-map-wrap > .caption { font-size: 11px; margin-top: var(--pyeongso-space-2); }
+.route-endpoint { display: flex; gap: var(--pyeongso-space-3); align-items: baseline; padding-block: var(--pyeongso-space-3); }
+.route-endpoint > span { font-size: 12px; color: var(--pyeongso-primary-text); flex-shrink: 0; }
+.journey-steps { list-style: none; padding: 0; margin: 0; }
+.journey-step { display: grid; grid-template-columns: 26px 1fr; gap: var(--pyeongso-space-3); padding-block: var(--pyeongso-space-3); border-left: 2px solid var(--pyeongso-primary); margin-left: 12px; padding-left: var(--pyeongso-space-4); }
+.journey-step.walk { border-left-style: dashed; border-color: var(--pyeongso-neutral-bar); }
+.journey-step-number { border-radius: 50%; background: var(--pyeongso-surface-brand); color: var(--pyeongso-primary-text); font-size: 12px; text-align: center; line-height: 26px; height: 26px; }
+.journey-step-time { float: right; margin-left: var(--pyeongso-space-2); font-size: 13px; }
+.journey-step p, .journey-step summary { font-size: 12px; color: var(--pyeongso-text-secondary); overflow-wrap: anywhere; }
+.journey-step summary { cursor: pointer; min-height: 44px; display: flex; align-items: center; }
+.journey-detail > .caption { margin-top: var(--pyeongso-space-4); font-size: 11px; }
+.saved-route-details > summary { cursor: pointer; padding-block: var(--pyeongso-space-3); min-height: 44px; color: var(--pyeongso-primary-text); }
+
+.report-map-section { margin-bottom: var(--pyeongso-space-6); }
+.report-map-section h3 { margin-block: var(--pyeongso-space-2); }
+.report-map-filter { display: flex; align-items: center; gap: var(--pyeongso-space-2); min-height: 44px; font-size: 13px; color: var(--pyeongso-text-secondary); }
+.report-map-filter input { width: 20px; height: 20px; accent-color: var(--adm-color-primary); }
+.report-map-marker { min-width: 44px; min-height: 44px; padding: var(--pyeongso-space-2) var(--pyeongso-space-3); border-radius: var(--adm-radius-l); border: 2px solid var(--pyeongso-text); background: var(--adm-color-primary); color: var(--pyeongso-text); font-size: 16px; font-weight: 700; cursor: pointer; }
+.report-map-marker:focus-visible { outline: 3px solid var(--pyeongso-primary-text); outline-offset: 2px; }
+.report-map-item { border-top: 1px solid var(--pyeongso-border); padding-top: var(--pyeongso-space-3); margin-top: var(--pyeongso-space-3); overflow-wrap: anywhere; }
+.report-map-detail .adm-button, .report-map-missing .adm-button { min-height: 44px; }

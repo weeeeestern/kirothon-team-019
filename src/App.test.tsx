@@ -65,12 +65,37 @@ describe('the complete local demo', () => {
     expect(await screen.findByText('Lv. 2, 함께 자랐어요!')).toBeTruthy();
     await waitFor(() => expect(getComputedStyle(screen.getByRole('button', { name: '옷장으로 가기' })).pointerEvents).not.toBe('none'));
     await user.click(screen.getByRole('button', { name: '옷장으로 가기' }));
-    await user.click(await screen.findByRole('button', { name: '캡 보유' }));
-    await waitFor(() => expect(saved().outfit).toBe('cap'));
+    await user.click(await screen.findByRole('button', { name: '안전모 보유' }));
+    await waitFor(() => expect(saved().outfit).toBe('hardhat'));
     await navigate('오늘', user);
-    expect(document.querySelector('.hero .kiro-avatar')?.innerHTML).toContain('M380 330a262 262 0 0 1 500 24');
+    expect(document.querySelector('.hero .kiro-avatar')?.innerHTML).toContain('hardhat');
     app.unmount(); render(<App />);
     expect(screen.queryByText('Lv. 2, 함께 자랐어요!')).toBeNull();
+  });
+  it('keeps the selected costume visible while scenario effects change and after reloading', async () => {
+    const seed = initialStore();
+    seed.ledger = Array.from({ length: 20 }, (_, i) => ({ id: `seed-${i}`, amount: 10, reason: '이전 제보' }));
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(seed));
+    const user = userEvent.setup(); const app = render(<App />);
+    await navigate('키로의 방', user);
+    await user.click(screen.getByRole('button', { name: '왕관 보유' }));
+    await navigate('오늘', user);
+    const hero = () => document.querySelector('.hero .kiro-avatar')!;
+    expect(hero().querySelector('.kiro-hat-crown')).not.toBeNull();
+    await user.click(screen.getByText('샘플 시나리오 바꾸기'));
+    for (const [label, selector] of [['미세먼지', '.kiro-dust'], ['비', '.kiro-rain-drops'], ['공사', '.kiro-prop']]) {
+      await user.click(screen.getByRole('option', { name: label, exact: true }));
+      expect(hero().querySelector(selector)).not.toBeNull();
+      expect(hero().querySelector('.kiro-hat-crown')).not.toBeNull();
+      expect(saved().outfit).toBe('crown');
+    }
+    expect(hero().querySelector('.kiro-hat-hardhat')).toBeNull();
+    await user.click(screen.getByRole('option', { name: '평범한 날', exact: true }));
+    expect(hero().querySelector('.kiro-hat-crown')).not.toBeNull();
+    expect(hero().querySelector('.kiro-hat-hardhat, .kiro-mask, .kiro-umbrella')).toBeNull();
+    app.unmount(); render(<App />);
+    expect(hero().querySelector('.kiro-hat-crown')).not.toBeNull();
+    expect(saved().outfit).toBe('crown');
   });
   it('offers route registration without showing a false quiet-day score when routes are empty', async () => {
     localStorage.setItem(STORAGE_KEY, JSON.stringify({ ...initialStore(), routes: [] }));
