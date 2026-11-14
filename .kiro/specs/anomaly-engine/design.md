@@ -28,7 +28,7 @@
 
 ```ts
 type DayType = 'weekday' | 'weekend' | 'holiday' | 'afterHoliday';
-type Situation = 'ordinary' | 'construction' | 'rain' | 'dust' | 'marathon' | 'strike' | 'congestion'; // theme/antdTheme.ts와 동일
+type Situation = 'ordinary' | 'construction' | 'rain' | 'dust' | 'marathon' | 'strike' | 'congestion'; // src/theme/situation.ts와 동일
 type Timing = 'scheduled' | 'sudden';
 
 interface BaselineKey { dayType: DayType; slot: number /* 0~47 */; area: string }
