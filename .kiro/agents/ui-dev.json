@@ -40,6 +40,22 @@
       {
         "capability": "fs_write",
         "match": [
+          "**"
+        ],
+        "exclude": [
+          "src/pages/**",
+          "src/components/**",
+          "src/theme/**",
+          "src/state/**",
+          "src/features/**",
+          "src/App.tsx",
+          "src/main.tsx"
+        ],
+        "effect": "deny"
+      },
+      {
+        "capability": "fs_write",
+        "match": [
           "**/.env",
           "**/.env.*"
         ],

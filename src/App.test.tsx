@@ -65,10 +65,10 @@ describe('the complete local demo', () => {
     expect(await screen.findByText('Lv. 2, 함께 자랐어요!')).toBeTruthy();
     await waitFor(() => expect(getComputedStyle(screen.getByRole('button', { name: '옷장으로 가기' })).pointerEvents).not.toBe('none'));
     await user.click(screen.getByRole('button', { name: '옷장으로 가기' }));
-    await user.click(await screen.findByRole('button', { name: '안전모 보유' }));
-    await waitFor(() => expect(saved().outfit).toBe('hardhat'));
+    await user.click(await screen.findByRole('button', { name: '캡 보유' }));
+    await waitFor(() => expect(saved().outfit).toBe('cap'));
     await navigate('오늘', user);
-    expect(document.querySelector('.hero .kiro-avatar')?.innerHTML).toContain('hardhat');
+    expect(document.querySelector('.hero .kiro-avatar')?.innerHTML).toContain('M380 330a262 262 0 0 1 500 24');
     app.unmount(); render(<App />);
     expect(screen.queryByText('Lv. 2, 함께 자랐어요!')).toBeNull();
   });

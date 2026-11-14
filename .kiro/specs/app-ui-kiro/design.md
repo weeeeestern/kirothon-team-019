@@ -97,3 +97,5 @@ interface DayResult {
 실제 내비게이션은 hash 기반 `#home/#notices/#report/#kiro/#routes/#eval`이다. 엔진 메모이제이션은 별도 useDay 대신 AppState에 통합했다. 작은 표시 요소는 페이지 내부 JSX로 구성하고 `BottomNav`, `KiroAvatar`, `LevelCard`, `PageHeader`, `UnlockDialog`를 공유한다.
 
 경로 검증은 `src/features/routes/route.ts`에서 공통 처리한다. 경유지는 배열의 출발·도착 사이에 추가·삭제하고 같은 지점 중복을 차단한다. 경로가 없으면 홈 점수를 대시로 표시하고 제보 화면에서 경로 등록으로 안내한다. UnlockDialog는 이전 저장 상태와 현재 해금 상태를 비교해 신규 획득만 표시한다. 착용은 store.outfit을 홈과 옷장에서 함께 읽는다. 출처 표기는 `src/data/provenance.ts`와 sources.json을 공유한다.
+
+이상이 있는 날은 상황 의상을 우선하고 착용 옷은 평범한 날에만 보인다. 옷장(`OUTFITS`)에는 상황 의상(`hardhat`, `raincoat`, `mask`, `bandana`)이 없다. `restoreStore`는 옷장에 없는 착용 옷만 `base`로 되돌리고 나머지 저장값은 유지한다(요구사항 6.10~6.12).

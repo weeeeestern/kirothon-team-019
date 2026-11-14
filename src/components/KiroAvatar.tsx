@@ -7,7 +7,8 @@ import { situationColor } from '@/theme/situation';
 export function KiroAvatar({ situation = 'ordinary', size = 280, outfit, expression, motion = 'float' }: { situation?: Situation; size?: number; outfit?: string; expression?: string; motion?: string }) {
   const renderer = window.KiroAvatar;
   const state = Object.hasOwn(renderer.SITUATIONS, situation) ? situation : 'ordinary';
-  const safeFit = outfit && Object.hasOwn(renderer.OUTFITS, outfit) ? outfit : undefined;
+  // 이상이 있는 날은 상황 의상이 착용 옷보다 우선한다.
+  const safeFit = state === 'ordinary' && outfit && Object.hasOwn(renderer.OUTFITS, outfit) ? outfit : undefined;
   const safeExpression = expression && Object.hasOwn(renderer.EXPRESSIONS, expression) ? expression : undefined;
   // Only the repository's renderer and whitelisted options produce this markup.
   const html = useMemo(() => renderer.render({ state, size, outfit: safeFit, expression: safeExpression, motion }), [renderer, state, size, safeFit, safeExpression, motion]);

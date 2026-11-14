@@ -26,10 +26,10 @@ export function restoreStore(raw: string | null): Store {
     if (!s || s.version !== 1 || !Array.isArray(s.routes) || !s.routes.every(validRoute) || !Number.isFinite(s.threshold) || s.threshold < .5 || s.threshold > 3) return initialStore();
     if (!s.feedback || Array.isArray(s.feedback) || typeof s.feedback !== 'object' || !Object.values(s.feedback).every(v => v === 'helpful' || v === 'notNeeded')) return initialStore();
     const strings = (a: unknown): a is string[] => Array.isArray(a) && a.every(x => typeof x === 'string');
-    if (!strings(s.read) || !strings(s.unlocked) || !OUTFITS.some(o => o.id === s.outfit)) return initialStore();
+    if (!strings(s.read) || !strings(s.unlocked)) return initialStore();
     if (!Array.isArray(s.ledger) || !s.ledger.every(e => e && typeof e.id === 'string' && [1, 5, 10].includes(e.amount) && typeof e.reason === 'string') || new Set(s.ledger.map(e => e.id)).size !== s.ledger.length) return initialStore();
     if (!Array.isArray(s.reports) || !s.reports.every(r => r && typeof r.id === 'string' && typeof r.author === 'string' && typeof r.place === 'string' && typeof r.note === 'string' && REPORT_TYPES.includes(r.situation) && validReportInput(r) && strings(r.confirmations) && strings(r.helpfulUsers) && Number.isFinite(Date.parse(r.createdAt)))) return initialStore();
-    return s;
+    return typeof s.outfit === 'string' && OUTFITS.some(o => o.id === s.outfit) ? s : { ...s, outfit: 'base' };
   } catch { return initialStore(); }
 }
 export function canWear(s: Store, id: string): boolean {

@@ -2,7 +2,13 @@
   "name": "engine-dev",
   "description": "판정 엔진·데이터·평가 담당. src/engine의 순수 TypeScript 판정 로직, 번들 데이터 JSON, 합성 시나리오 평가 스크립트를 다룬다. [engine] 태그 작업에 쓴다.",
   "prompt": "너는 잠잠의 engine-dev다. [engine] 태그 작업만 한다.\n\n- 쓰기는 src/engine/**, src/data/**, scripts/**만 한다.\n- 엔진은 React를 가져오지 않는다. 판정은 runDay 하나만 쓰고 평가용 별도 로직을 만들지 않는다.\n- 판정은 브라우저에서만 한다. 사용자의 경로와 출발 시각을 서버로 보내는 코드를 만들지 않는다.\n- 완료 전에 npm --prefix src test와 npm --prefix src run evaluate를 돌려 지표(평범한 날 0건, 탐지율 80% 이상, 알림 50% 이상 감소)가 유지되는지 확인한다.\n- 보고: 요구사항 번호 -> 파일 -> 확인한 명령과 결과.",
-  "tools": ["read", "grep", "glob", "write", "shell"],
+  "tools": [
+    "read",
+    "grep",
+    "glob",
+    "write",
+    "shell"
+  ],
   "resources": [
     "file://AGENTS.md",
     "file://.kiro/steering/api-contract.md",
@@ -17,9 +23,45 @@
   ],
   "permissions": {
     "rules": [
-      { "capability": "fs_write", "match": ["src/engine/**", "src/data/**", "scripts/**"], "effect": "allow" },
-      { "capability": "fs_write", "match": ["**/.env", "**/.env.*"], "effect": "deny" },
-      { "capability": "shell", "match": ["npm --prefix src test*", "npm --prefix src run evaluate*", "npm --prefix src run build*", "npx vitest*"], "effect": "allow" }
+      {
+        "capability": "fs_write",
+        "match": [
+          "src/engine/**",
+          "src/data/**",
+          "scripts/**"
+        ],
+        "effect": "allow"
+      },
+      {
+        "capability": "fs_write",
+        "match": [
+          "**"
+        ],
+        "exclude": [
+          "src/engine/**",
+          "src/data/**",
+          "scripts/**"
+        ],
+        "effect": "deny"
+      },
+      {
+        "capability": "fs_write",
+        "match": [
+          "**/.env",
+          "**/.env.*"
+        ],
+        "effect": "deny"
+      },
+      {
+        "capability": "shell",
+        "match": [
+          "npm --prefix src test*",
+          "npm --prefix src run evaluate*",
+          "npm --prefix src run build*",
+          "npx vitest*"
+        ],
+        "effect": "allow"
+      }
     ]
   }
 }
