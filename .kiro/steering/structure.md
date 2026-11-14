@@ -9,14 +9,17 @@ inclusion: always
 ```
 .kiro/
   specs/            기능별 requirements, design, tasks
-  steering/         product, tech, structure (always), design-system, infra (fileMatch), deploy-checklist (manual)
-  hooks/, scripts/  저장 후 점검, PreToolUse 차단 훅과 스크립트
+  steering/         제품·기술·구조·결정(always), 디자인·인프라·프론트엔드(fileMatch), 배포 점검(manual)
+  agents/           lead, engine-dev, ui-dev, data, transit, docs, qa, security
+  hooks/, scripts/  도구 보호와 압축 전후 상태 복귀
   evidence/         훅 차단 실행 기록
-  agents/           data, transit, docs, lead 역할 설정
+  settings/         워크스페이스 CLI 설정
+  compaction/       로컬 Git 메타데이터 스냅샷 (Git 제외)
 api/                Vercel API 핸들러
 server/             서버 전용 외부 API 중계
 design/             화면 시안, DESIGN.md, 키로 렌더러(animation/)
-docs/               PLANNING.md, PRD.md, 기능명세서.xlsx
+docs/               기획·요구사항·DECISIONS.md·AGENT_WORKFLOW.md
+qa/                 검토 지침, 자동화 테스트, 검증 보고서
 data/SOURCES.md     데이터 소스 검증 기록
 scripts/
   collect/          소스별 수집 스크립트 (개발 시점에만 실행)

@@ -1,0 +1,19 @@
+{
+  "version": "v1",
+  "hooks": [
+    {
+      "name": "압축 전 작업 상태 저장",
+      "trigger": "PreCompact",
+      "description": "Git 메타데이터만 저장하고 결정 기록 갱신을 안내한다",
+      "action": { "type": "command", "command": "bash .kiro/scripts/pre-compact.sh" },
+      "timeout": 30
+    },
+    {
+      "name": "압축 후 결정 기록 복귀",
+      "trigger": "PostCompact",
+      "description": "대화 요약을 복사하지 않고 현재 결정과 Git 상태 재확인을 안내한다",
+      "action": { "type": "command", "command": "bash .kiro/scripts/post-compact.sh" },
+      "timeout": 30
+    }
+  ]
+}
