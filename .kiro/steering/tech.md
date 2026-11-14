@@ -13,13 +13,13 @@ inclusion: always
 | 테스트 | `vitest`, 컴포넌트는 `@testing-library/react` |
 | 상태 저장 | React Context + `localStorage` |
 | 배포 | Vercel (링크 공유) |
-| 백엔드 | 없음 |
+| 백엔드 | Supabase (제보·확인·도움됨·포인트만. 경계는 `api-contract` steering) |
 
 `docs/PLANNING.md`는 Tailwind를 적었지만 UI 라이브러리는 `design/DESIGN.md`를 따른다. Tailwind는 쓰지 않는다.
 
 ## 데이터 원칙
 
-- 앱은 런타임에 외부 API를 호출하지 않는다. 사전 수집한 JSON(`src/data/*.json`)만 읽는다.
+- 앱은 런타임에 공공데이터 API를 호출하지 않는다. 판정은 사전 수집한 JSON(`src/data/*.json`)만 읽는다. 런타임 호출은 `src/api/`를 통한 Supabase뿐이다.
 - 각 JSON에는 소스 이름과 수집 시각(`meta`)을 넣는다.
 - 소스 검증에 실패하면 합성 데이터로 대체하고 `source: 'synthetic'`을 붙인다. 샘플 데이터 모드가 기본이다.
 - 수집 스크립트는 `scripts/collect/`에 두고 개발 시점에만 실행한다.

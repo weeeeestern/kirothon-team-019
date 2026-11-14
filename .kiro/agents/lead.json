@@ -2,20 +2,85 @@
   "name": "lead",
   "description": "잠잠 프로젝트 오케스트레이터. 스펙 tasks.md의 [backend]/[engine]/[ui]/[qa] 태그를 보고 담당 서브에이전트에게 위임하고 qa 검토 루프를 돌린다. 직접 코드를 쓰지 않는다.",
   "prompt": "너는 잠잠 프로젝트의 lead다. 직접 구현하지 않고 위임만 한다.\n\n순서:\n1. 요청과 관련된 .kiro/specs/*/tasks.md를 읽고, 각 작업의 태그([backend], [engine], [ui], [qa])로 담당을 정한다.\n2. 계약(src/api/contract.ts)이 바뀌는 작업은 backend-dev에게 먼저 맡긴다. 계약이 확정되면 engine-dev와 ui-dev에게 병렬로 맡긴다.\n3. 구현이 끝나면 qa에게 테스트 작성과 스펙 대조를 맡긴다. qa 결과 끝에 NEEDS_CHANGES가 있으면 지적된 담당 에이전트에게 되돌린다. 최대 3회.\n4. 마지막에 '작업 번호 -> 담당 에이전트 -> 바뀐 파일 -> 테스트 결과' 표로 보고한다. 실제로 위임하지 않은 작업을 위임했다고 쓰지 않는다.\n\n규칙: 서브에이전트에게 맡길 때는 작업 번호, 요구사항 번호, 쓰기 허용 경로, 완료 조건(명령과 기대 결과)을 함께 준다.",
-  "tools": ["read", "grep", "glob", "subagent/backend-dev", "subagent/engine-dev", "subagent/ui-dev", "subagent/qa"],
+  "tools": [
+    "read",
+    "grep",
+    "glob",
+    "subagent/backend-dev",
+    "subagent/engine-dev",
+    "subagent/ui-dev",
+    "subagent/qa"
+  ],
   "resources": [
     "file://AGENTS.md",
     "file://.kiro/steering/product.md",
     "file://.kiro/steering/structure.md",
-    "file://.kiro/steering/api-contract.md"
+    "file://.kiro/steering/api-contract.md",
+    "file://.kiro/specs/supabase-backend/tasks.md"
   ],
   "permissions": {
     "rules": [
-      { "capability": "subagent", "match": ["backend-dev", "engine-dev", "ui-dev", "qa"], "effect": "allow" },
-      { "capability": "fs_write", "match": ["supabase/**", "src/**", "scripts/**", "qa/**", ".kiro/specs/**/tasks.md"], "effect": "allow" },
-      { "capability": "fs_write", "match": ["**/.env", "**/.env.*", "**/*.key", "**/*.pem"], "effect": "deny" },
-      { "capability": "shell", "match": ["npm test*", "npm run test*", "npm run build*", "npm --prefix src *", "npx vitest*", "npx tsc*", "npx supabase start*", "npx supabase status*", "npx supabase db reset*", "npx supabase test db*", "npx supabase migration *", "git status*", "git diff*"], "effect": "allow" },
-      { "capability": "shell", "match": ["npx supabase db push*", "npx supabase functions deploy*", "npx supabase link*", "vercel*", "git push*"], "effect": "ask" }
+      {
+        "capability": "subagent",
+        "match": [
+          "backend-dev",
+          "engine-dev",
+          "ui-dev",
+          "qa"
+        ],
+        "effect": "allow"
+      },
+      {
+        "capability": "fs_write",
+        "match": [
+          "supabase/**",
+          "src/**",
+          "scripts/**",
+          "qa/**",
+          ".kiro/specs/**/tasks.md"
+        ],
+        "effect": "allow"
+      },
+      {
+        "capability": "fs_write",
+        "match": [
+          "**/.env",
+          "**/.env.*",
+          "**/*.key",
+          "**/*.pem"
+        ],
+        "effect": "deny"
+      },
+      {
+        "capability": "shell",
+        "match": [
+          "npm test*",
+          "npm run test*",
+          "npm run build*",
+          "npm --prefix src *",
+          "npx vitest*",
+          "npx tsc*",
+          "npx supabase start*",
+          "npx supabase status*",
+          "npx supabase db reset*",
+          "npx supabase test db*",
+          "npx supabase migration *",
+          "git status*",
+          "git diff*"
+        ],
+        "effect": "allow"
+      },
+      {
+        "capability": "shell",
+        "match": [
+          "npx supabase db push*",
+          "npx supabase functions deploy*",
+          "npx supabase link*",
+          "vercel*",
+          "git push*"
+        ],
+        "effect": "ask"
+      }
     ]
   }
 }

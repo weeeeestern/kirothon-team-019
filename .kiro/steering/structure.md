@@ -13,11 +13,15 @@ inclusion: always
 design/             화면 시안, DESIGN.md, 키로 렌더러(animation/)
 docs/               PLANNING.md, PRD.md, 기능명세서.xlsx
 data/SOURCES.md     데이터 소스 검증 기록
+supabase/           migrations/, functions/, tests/ (backend-dev)
+qa/                 scenarios.md, reports/ (qa)
+AGENTS.md           에이전트 목록과 명령
 scripts/
-  collect/          소스별 수집 스크립트 (개발 시점에만 실행)
+  collect/          (예정) 소스별 수집 스크립트
   eval/             합성 시나리오 생성과 평가
 src/
   main.tsx, App.tsx
+  api/              Supabase 계약과 구현 (backend-dev 소유, 나머지는 읽기만)
   theme/            theme.css, situation.ts
   engine/           판정 엔진 (순수 TypeScript)
   features/
@@ -38,7 +42,8 @@ PRESENTATION.pdf    레포 최상단, 제출 필수
 |---|---|---|
 | `src/engine/` | `src/data/` 타입 | React, `pages/`, `components/` |
 | `src/features/` | `src/engine/` 타입 | `pages/`, `components/` |
-| `src/pages/` | `components/`, `state/`, `hooks/`, `engine/`, `features/` | `scripts/` |
+| `src/api/` | `src/engine/` 타입, `features/` 타입 | `pages/`, `components/`, `state/` |
+| `src/pages/` | `components/`, `state/`, `hooks/`, `engine/`, `features/`, `api/` | `scripts/`, `@supabase/supabase-js` 직접 사용 |
 | `scripts/` | `src/engine/` | `src/pages/`, React |
 
 ## 파일 규칙

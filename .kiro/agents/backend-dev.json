@@ -2,7 +2,13 @@
   "name": "backend-dev",
   "description": "Supabase 백엔드 담당. 제보·확인·포인트 테이블, RLS, RPC 함수, 공공데이터 수집 Edge Function, 프론트와의 계약 타입(src/api/)을 만든다. [backend] 태그 작업에 쓴다.",
   "prompt": "너는 잠잠의 backend-dev다. [backend] 태그 작업만 한다.\n\n- 쓰기는 supabase/**와 src/api/**만 한다. 다른 경로는 고치지 않고, 필요하면 lead에게 보고한다.\n- 스키마 변경은 항상 supabase/migrations/에 새 SQL 파일로 만든다. 기존 마이그레이션은 고치지 않는다.\n- 모든 테이블에 RLS를 켜고 정책을 같은 마이그레이션에 넣는다. 포인트 적립과 제보 확인은 클라이언트가 테이블에 직접 쓰지 못하게 하고 security definer RPC로만 한다.\n- 계약(src/api/contract.ts)을 바꾸면 무엇이 바뀌었는지 보고 끝에 '계약 변경:'으로 적는다.\n- 완료 전에 npx supabase db reset과 npx supabase test db를 돌려 통과를 확인한다.\n- 보고: 요구사항 번호 -> 파일 -> 확인한 명령과 결과.",
-  "tools": ["read", "grep", "glob", "write", "shell"],
+  "tools": [
+    "read",
+    "grep",
+    "glob",
+    "write",
+    "shell"
+  ],
   "resources": [
     "file://AGENTS.md",
     "file://supabase/AGENTS.md",
@@ -11,14 +17,54 @@
     "file://.kiro/steering/product.md",
     "file://.kiro/specs/citizen-report-points/requirements.md",
     "file://.kiro/specs/citizen-report-points/design.md",
-    "file://.kiro/specs/citizen-report-points/tasks.md"
+    "file://.kiro/specs/citizen-report-points/tasks.md",
+    "file://.kiro/specs/supabase-backend/requirements.md",
+    "file://.kiro/specs/supabase-backend/design.md",
+    "file://.kiro/specs/supabase-backend/tasks.md"
   ],
   "permissions": {
     "rules": [
-      { "capability": "fs_write", "match": ["supabase/**", "src/api/**"], "effect": "allow" },
-      { "capability": "fs_write", "match": ["**/.env", "**/.env.*", "**/*.key", "**/*.pem"], "effect": "deny" },
-      { "capability": "shell", "match": ["npx supabase start*", "npx supabase status*", "npx supabase db reset*", "npx supabase test db*", "npx supabase migration *", "npx supabase gen types*", "npm --prefix src run build*", "npm --prefix src test*"], "effect": "allow" },
-      { "capability": "shell", "match": ["npx supabase db push*", "npx supabase functions deploy*", "npx supabase link*"], "effect": "ask" }
+      {
+        "capability": "fs_write",
+        "match": [
+          "supabase/**",
+          "src/api/**"
+        ],
+        "effect": "allow"
+      },
+      {
+        "capability": "fs_write",
+        "match": [
+          "**/.env",
+          "**/.env.*",
+          "**/*.key",
+          "**/*.pem"
+        ],
+        "effect": "deny"
+      },
+      {
+        "capability": "shell",
+        "match": [
+          "npx supabase start*",
+          "npx supabase status*",
+          "npx supabase db reset*",
+          "npx supabase test db*",
+          "npx supabase migration *",
+          "npx supabase gen types*",
+          "npm --prefix src run build*",
+          "npm --prefix src test*"
+        ],
+        "effect": "allow"
+      },
+      {
+        "capability": "shell",
+        "match": [
+          "npx supabase db push*",
+          "npx supabase functions deploy*",
+          "npx supabase link*"
+        ],
+        "effect": "ask"
+      }
     ]
   }
 }
