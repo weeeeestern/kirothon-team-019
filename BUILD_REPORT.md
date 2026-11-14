@@ -11,7 +11,8 @@
 |---|---|---|---|
 | 기획 | Kiro CLI 대화 | 기획서(`PLANNING.md`)를 바탕으로 PRD와 기능명세서(10개 영역, 하위 기능, 정책 5종)를 작성 | `docs/PRD.md`, `docs/기능명세서.xlsx`, `docs/PLANNING.md` |
 | 설계 | Spec (requirements, design, tasks) | PRD 영역을 팀 분업(A 판정 엔진 / B 앱 UI·키로 / C 포인트·제보 / D 데이터)에 맞춰 스펙 4개로 나눠 작성. 요구사항은 "~해야 한다" 형식의 번호 항목, 설계는 모듈 경로·데이터 모델·오류 처리·테스트 전략, 작업은 요구사항 번호와 연결 | `.kiro/specs/anomaly-engine/`, `.kiro/specs/app-ui-kiro/`, `.kiro/specs/citizen-report-points/`, `.kiro/specs/data-and-evaluation/` |
-| 설계 | Steering | antd-mobile 기반 디자인 시스템 규칙을 `inclusion: auto` steering으로 두고, 디자인 문서와 키로 애니메이션 문서를 `#[[file:...]]`로 참조하게 구성. UI 작업 때 Kiro가 자동으로 규칙을 불러온다 | `.kiro/steering/design-system.md`, `design/DESIGN.md`, `design/animation/NOTES.md` |
+| 설계 | Steering (always) | 프로젝트 전반 규칙을 3개로 나눠 `inclusion: always`로 둠. `product.md`는 제품 규칙(판정식, 알림 0건 원칙, 위치 추적 금지, 범위 밖, 표기 의무)과 스펙 4개 목록, `tech.md`는 스택·데이터 원칙·보안·명령, `structure.md`는 폴더 구조와 모듈 경계. 어떤 작업을 요청해도 Kiro가 항상 이 규칙을 먼저 읽는다 | `.kiro/steering/product.md`, `.kiro/steering/tech.md`, `.kiro/steering/structure.md` |
+| 설계 | Steering (auto) | antd-mobile 기반 디자인 시스템 규칙을 `inclusion: auto` steering으로 두고, 디자인 문서와 키로 애니메이션 문서를 `#[[file:...]]`로 참조하게 구성. UI 작업 때 Kiro가 자동으로 규칙을 불러온다 | `.kiro/steering/design-system.md`, `design/DESIGN.md`, `design/animation/NOTES.md` |
 | 구현 | | 시작 전 | |
 | 검증 | | 시작 전. 합성 시나리오 지표(알림 0건, 탐지율 80% 이상, 알림 50% 이상 감소)를 `vitest` 단언으로 확인할 계획 | `.kiro/specs/data-and-evaluation/tasks.md` 5.3 |
 
