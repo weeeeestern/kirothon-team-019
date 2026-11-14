@@ -8,9 +8,9 @@
 |---|---|---|---|
 | 기획 | Kiro CLI 대화 | 초기 기획을 PRD와 기능명세서로 구체화 | `docs/PLANNING.md`, `docs/PRD.md`, `docs/기능명세서.xlsx` |
 | 설계 | Specs | 엔진·화면·제보와 포인트·데이터와 평가를 요구사항→설계→작업으로 분리, 작업에 요구사항 번호 연결 | `.kiro/specs/`의 4개 스펙 |
-| 규칙 | Steering | 제품·기술·구조·인프라의 always 규칙, 디자인의 auto 규칙 및 파일 참조 | `.kiro/steering/`의 5개 문서 |
+| 규칙 | Steering | 모든 작업에 필요한 제품·기술·구조만 always로 둠. 디자인 규칙은 UI 파일(`src/pages/**`, `src/components/**` 등), 인프라·키 규칙은 `api/**`, `server/**`, 길찾기·수집 파일을 다룰 때만 불러오는 fileMatch로 바꿈. 배포 점검 절차는 `#deploy-checklist`로 부르는 manual. 비밀 키 금지 규칙은 always인 `tech.md`와 `AGENTS.md`에 남김. 길찾기 에이전트는 steering이 자동으로 들어가지 않아 `infra.md`, `deploy-checklist.md`를 resources에 명시 | `.kiro/steering/`의 6개 문서, `.kiro/agents/jamjam-transit.json` |
 | 점검 | Hooks (PostFileSave) | 스펙 동기화와 비밀정보 확인을 요청하는 저장 후 프롬프트 | `.kiro/hooks/spec-sync-on-save.json`, `.kiro/hooks/secret-check-on-save.json` |
-| 차단 | Hooks (PreToolUse, command) | Kiro 도구 호출 직전에 스크립트를 실행해 종료 코드 2로 막음. 대상은 force push(`+브랜치` 포함), `.env`·`.pem`·`.key`의 `git add`, 도구 입력의 API 키와 DB 접속 비밀번호, 비밀 값이 스테이징된 `git commit`. 값은 출력하지 않고 파일 이름만 알림 | `.kiro/hooks/guard-pretool.json`, `.kiro/scripts/guard-pretool.sh` |
+| 차단 | Hooks (PreToolUse, command) | Kiro 도구 호출 직전에 스크립트를 실행해 종료 코드 2로 막음. 대상은 force push(`+브랜치` 포함), `.env`·`.pem`·`.key`의 `git add`, 도구 입력의 API 키와 DB 접속 비밀번호, 비밀 값이 스테이징된 `git commit`. 값은 출력하지 않고 파일 이름만 알림. 차단할 때마다 시각·출처(kiro/manual)·규칙 ID·도구 이름을 실행 기록에 남김(입력값은 기록 안 함) | `.kiro/hooks/guard-pretool.json`, `.kiro/scripts/guard-pretool.sh`, `.kiro/evidence/hook-events.log` |
 | 검증 | 서브에이전트 코드 리뷰 + 실제 실행 시험 | PR #3(차단 훅)을 리뷰 서브에이전트(`semantic_reviewer`)로 리뷰해 머지 차단 2건(`.env.example` 편집 오탐, `DATABASE_URL` 비밀번호 누락)과 수정 권장 항목을 찾음. 수정 후 스크립트 단위 시험 16건, 커밋 검사 3건, 임시 폴더의 실제 Kiro(`--v3`) 시험 6건으로 차단·통과를 확인하고 머지. 실행 시험에서 Kiro가 셸 명령을 `tool_input.command`로 넘긴다는 훅의 전제도 확인 | `docs/reviews/PR3_REVIEW.md`, PR #3 |
 | 역할 구성 | Custom agents | 데이터·길찾기·문서·통합 역할과 수정 범위 분리. 4개 설정을 `kiro-cli agent validate`로 검증 | `.kiro/agents/jamjam-*.json` |
 
@@ -48,6 +48,20 @@
 3. **길찾기 범위 추가:** 2026-11-14 사용자 요청으로 카카오맵·ODsay를 포함했습니다. 직접 경로 탐색 알고리즘과 상시 위치 추적은 제외합니다.
 4. **데이터 분리:** 혼잡도 %, 승하차 인원, 대기질 농도를 별도 단위로 다룹니다. 과거 평균을 현재 관측이나 날짜별 분산으로 오인하지 않도록 합니다.
 5. **문서와 구현 일치:** 인프라 steering의 포함 규칙, Vite 공개키와 서버 비밀키 구분, 미완료 작업 상태를 정리했습니다.
+
+## 변경 → 요구사항 → 커밋 추적
+
+변경이 생겼을 때 요구사항 번호를 바꾸거나 추가하고, 같은 커밋에서 코드·테스트와 함께 반영한 사례입니다. 마지막 행은 스펙에 반영하지 않은 예외입니다. 번호는 `.kiro/specs/<스펙>/requirements.md`의 현재 번호이고, 커밋은 `git log`로 확인할 수 있습니다.
+
+| 계기 | 요구사항 | 커밋 | 검증 |
+|---|---|---|---|
+| 제보 설명 글자 수가 디자인 시안과 달라 80자를 100자로 맞춤. 스펙 3종(요구사항·설계·작업)을 같은 커밋에서 수정 | `citizen-report-points` 1.4, `app-ui-kiro` 5.1 | `1f85d61` | 문서 변경, 별도 테스트 없음 |
+| 2026-11-14 사용자 요청으로 길찾기를 범위에 포함. 기존 "길찾기 제공 안 함" 요구사항을 바꾸고 새 요구사항 추가, `product.md` steering도 함께 수정 | `app-ui-kiro` 2.4, 9.1~9.5, `data-and-evaluation` 추가 요구사항 1~4 | `85a1190` | `src/features/transit/RoutePlanner.test.tsx`, `src/features/baseline/publicBaseline.test.ts` |
+| 경로 편집과 해금 안내 흐름을 완성하면서 경유지, 빈 경로 안내, 해금 안내, 홈 착용 반영 요구사항 추가 | `app-ui-kiro` 2.6, 2.7, 6.8, 6.9 (작업 12) | `f2c02c4` | `src/App.test.tsx`의 `saves a route through its form and retains it after remount`, `announces a level unlock once and wears the new outfit on home` 테스트 |
+| 코스튬을 착용하면 이상 상태 장식(마스크·우비 등)이 사라지는 문제. 요구사항 6.10을 추가하고, 같은 커밋에서 설계·작업·코드·테스트를 함께 수정 | `app-ui-kiro` 6.10 | `8e212bd` (PR #2, 머지 `03ccc49`) | `src/components/KiroAvatar.test.ts`, `src/App.test.tsx`의 `keeps situation equipment after wearing a costume and restores it when the alert clears` 테스트 |
+| 키로 렌더러 버그 두 건: Safari에서 몸통이 투명해짐(SVG id 중복), 배포 번들에서 렌더러가 등록되지 않음. 요구사항 6.2("키로는 항상 `KiroAvatar.render`로만 그린다")에 해당하지만 스펙에는 별도 항목을 추가하지 않았음 | `app-ui-kiro` 6.2 | `47e640c`, `2bdd2e8` (`2bdd2e8`은 PR #1) | `scripts/verify-build.mjs`로 배포 번들 점검 추가 |
+
+마지막 행처럼 버그 수정은 요구사항 번호 없이 커밋만 남았습니다. 재발 방지 점검(`verify-build.mjs`)은 있지만 스펙에는 기록하지 않았다는 점이 남은 개선 사항입니다.
 
 ## 제출 자료와 남은 일
 

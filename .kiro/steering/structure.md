@@ -9,9 +9,10 @@ inclusion: always
 ```
 .kiro/
   specs/            기능별 requirements, design, tasks
-  steering/         product, tech, structure, design-system, infra
+  steering/         product, tech, structure, api-contract, decisions (always), design-system, infra, backend, frontend (fileMatch), deploy-checklist (manual)
   agents/           lead 1개 + 담당 8개 (목록과 쓰기 경로는 AGENTS.md)
-  hooks/            guard-pretool(PreToolUse), compaction, 저장 시 점검
+  hooks/, scripts/  guard-pretool(PreToolUse 차단), compaction(압축 전후), 저장 후 점검과 스크립트
+  evidence/         훅 차단 실행 기록
   settings/         cli.json (자동 압축 40%)
 api/                Vercel API 핸들러 (jamjam-transit)
 server/             서버 전용 외부 API 중계 (jamjam-transit)

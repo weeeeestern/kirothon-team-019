@@ -17,7 +17,9 @@
     "file://.kiro/steering/api-contract.md",
     "file://.kiro/specs/app-ui-kiro/requirements.md",
     "file://.kiro/specs/app-ui-kiro/design.md",
-    "file://.kiro/specs/app-ui-kiro/tasks.md"
+    "file://.kiro/specs/app-ui-kiro/tasks.md",
+    "file://.kiro/steering/infra.md",
+    "file://.kiro/steering/deploy-checklist.md"
   ],
   "permissions": {
     "rules": [
