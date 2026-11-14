@@ -1,6 +1,6 @@
 # 평소 디자인 시스템
 
-"평소"는 평소와 다른 날에만 알려 주는 출퇴근 이상 알림 서비스예요. 이 문서는 `design/` 폴더의 화면 시안과 키로 캐릭터 시안을 하나의 규칙으로 정리한 거예요. UI는 [Ant Design v6](https://ant.design/components/overview/)을 기반으로 만들고, 테마 토큰과 일부 컴포넌트를 우리 서비스에 맞게 바꿔서 써요.
+"평소"는 평소와 다른 날에만 알려 주는 출퇴근 이상 알림 서비스예요. 이 문서는 `design/` 폴더의 화면 시안과 키로 캐릭터 시안을 하나의 규칙으로 정리한 거예요. UI는 Ant Design의 모바일 라이브러리인 [antd-mobile](https://mobile.ant.design/)을 기반으로 만들고, CSS 변수와 일부 컴포넌트를 우리 서비스에 맞게 바꿔서 써요.
 
 Kiro에서는 [`.kiro/steering/design-system.md`](../.kiro/steering/design-system.md)가 이 문서를 자동으로 불러와요. 사용법은 [11장](#11-kiro에서-쓰는-법)에 있어요.
 
@@ -102,100 +102,189 @@ Kiro에서는 [`.kiro/steering/design-system.md`](../.kiro/steering/design-syste
 
 ## 4. 간격, 모서리, 크기
 
-시안은 2~3배율이고, 아래 값은 1배율(px) 기준이에요.
+시안 `01`~`04`는 2배율(800px 폭 = 기기 400px)이라 시안 픽셀을 2로 나눠 1배율(px)로 정리했어요. `scene*`은 휴대폰 프레임이 포함된 이미지라 비율만 참고했어요. 측정값은 4px 단위로 반올림했어요.
 
-| 항목 | 값 |
+### 간격 단계
+
+모든 간격은 아래 단계 중 하나만 써요. 단계에 없는 값(10px, 18px 등)은 쓰지 않아요.
+
+| 토큰 | 값 | 주로 쓰는 곳 |
+|---|---|---|
+| `--pyeongso-space-1` | 4px | 제목과 부제목 사이, 아이콘과 라벨 사이 |
+| `--pyeongso-space-2` | 8px | 칩 사이, 버튼 두 개 사이, 태그 안 좌우 여백 |
+| `--pyeongso-space-3` | 12px | 카드 안 줄 사이, 섹션 라벨과 입력창 사이 |
+| `--pyeongso-space-4` | 16px | 카드 안쪽 여백, 카드 사이 |
+| `--pyeongso-space-5` | 20px | 큰 카드(알림, 대안) 안쪽 여백 |
+| `--pyeongso-space-6` | 24px | 화면 좌우 여백, 헤더와 화면 메시지 사이 |
+| `--pyeongso-space-8` | 32px | 섹션 사이(제보 화면의 입력 묶음 사이, 키로 위아래) |
+| `--pyeongso-space-10` | 40px | 화면 메시지와 키로 사이 |
+
+### 화면 뼈대
+
+| 영역 | 값 |
 |---|---|
-| 화면 좌우 여백 | 24 |
-| 카드 안쪽 여백 | 16~20 |
-| 카드 사이 간격 | 16 |
-| 섹션 사이 간격 | 28 |
-| 칩, 작은 태그 모서리 | 8 |
-| 버튼, 입력창 모서리 | 12 |
-| 카드 모서리 | 20 |
-| 배지, 상태 표시, 큰 CTA | 완전한 원형(999) |
-| 기본 버튼 높이 | 40 |
-| 큰 버튼(CTA) 높이 | 50 |
-| 헤더 원형 버튼 | 44 × 44 |
-| 하단 탭 높이 | 64 (+ 홈 인디케이터 영역) |
+| 화면 좌우 여백 | 24px (`space-6`) |
+| 상태 표시줄 아래 → 화면 제목 | 8px (상태 표시줄 높이는 `SafeArea position="top"`) |
+| 화면 제목 → 부제목 | 4px |
+| 헤더 → 화면 메시지(Caption 인사말) | 24px |
+| 인사말 → Hero 메시지 | 4px |
+| Hero 메시지 → 본문 첫 요소 | 32px |
+| 본문 마지막 요소 → 하단 탭 | 24px + 하단 탭 높이 |
+| 최대 폭 | 480px, 가운데 정렬 |
 
-간격은 Ant Design 기본 단위(4px)의 배수로 맞춰요.
+### 컴포넌트별 크기
 
-## 5. Ant Design 테마 설정
+| 컴포넌트 | 높이 | 안쪽 여백 | 모서리 | 기타 |
+|---|---|---|---|---|
+| 기본 카드 (`Card`, `RouteCard`, `QuietCard`) | 내용에 맞춤 | 16px | 20px | 카드 사이 16px |
+| 큰 카드 (알림 카드, `AlternativeCard`, `FeedbackCard`) | 내용에 맞춤 | 20px | 20px | 카드 안 블록 사이 16px |
+| `ActionBox` | 내용에 맞춤 | 16px | 16px | 제목과 설명 사이 4px |
+| 큰 버튼 (CTA) | 50px | 좌우 16px | 12px (`scene*` 대안 카드는 999) | 글자 17px / 700 |
+| 기본 버튼 | 40px | 좌우 16px | 12px | 두 개 나란히 놓을 때 사이 8px |
+| 입력창 (`Picker` 트리거, 시각) | 50px | 좌우 16px | 12px | 섹션 라벨과 사이 12px |
+| `TextArea` | 최소 68px | 16px | 12px | 글자 수는 오른쪽 아래 |
+| `Selector` 칩 | 36px | 좌우 12px | 8px | 칩 사이 가로 8px, 세로 8px, 3열 |
+| `Tag` | 24px | 좌우 8px | 8px | 글자 13px / 600 |
+| `PointBadge` | 32px | 좌우 14px | 999 | 글자 15px / 700 |
+| `RoutePill` | 36px | 좌우 16px | 999 | 점 10px, 점과 글자 사이 8px |
+| 헤더 원형 버튼 (종) | 44px | – | 999 | 아이콘 22px |
+| `ProgressBar` | 8px | – | 999 | 막대와 아래 라벨 사이 12px |
+| `ComparisonBar` | 막대 12px | – | 999 | 두 줄 사이 16px, 라벨 폭 48px |
+| `WardrobeItem` | 102px | 12px | 16px | 3열, 사이 8px, 썸네일 40px |
+| `IncidentCard` 아이콘 칸 | 56px | – | 16px | 아이콘 칸과 글자 사이 16px |
+| `PushBanner` | 64px | 좌우 16px | 999 | 앱 아이콘 40px, 모서리 10px |
+| `TabBar` | 56px + 하단 안전 영역 | – | – | 활성 탭 배경 64×52px, 모서리 16px, 아이콘 24px, 라벨 12px |
+| `KiroHero` | 지름 280px (이상이 있는 날 260px) | – | 999 | 위아래 32px |
 
-다크 알고리즘을 기본으로 쓰고, 색과 모서리 토큰을 덮어써요. 앱 최상단에서 `ConfigProvider`로 감싸요.
+### 모서리 단계
+
+| 토큰 | 값 | 쓰는 곳 |
+|---|---|---|
+| `--adm-radius-s` | 8px | 칩, 태그 |
+| `--adm-radius-m` | 12px | 버튼, 입력창 |
+| `--pyeongso-radius-card-inner` | 16px | `ActionBox`, 옷장 아이템, 아이콘 칸, 활성 탭 배경 |
+| `--adm-radius-l` | 20px | 카드 |
+| 999px | 완전한 원형 | 배지, 알약, 진행 막대, 원형 버튼 |
+
+### CSS 변수로 쓰기
+
+간격과 모서리도 5장의 `theme.css`에 변수로 넣고, 컴포넌트에서는 숫자 대신 변수를 써요.
+
+```css
+html[data-prefers-color-scheme='dark'] {
+  --pyeongso-space-1: 4px;
+  --pyeongso-space-2: 8px;
+  --pyeongso-space-3: 12px;
+  --pyeongso-space-4: 16px;
+  --pyeongso-space-5: 20px;
+  --pyeongso-space-6: 24px;
+  --pyeongso-space-8: 32px;
+  --pyeongso-space-10: 40px;
+  --pyeongso-page-x: var(--pyeongso-space-6);
+  --pyeongso-radius-card-inner: 16px;
+  --pyeongso-control-height: 40px;
+  --pyeongso-control-height-lg: 50px;
+  --pyeongso-tabbar-height: 56px;
+}
+
+.page {
+  max-width: 480px;
+  margin: 0 auto;
+  padding: 0 var(--pyeongso-page-x)
+    calc(var(--pyeongso-tabbar-height) + var(--pyeongso-space-6) + env(safe-area-inset-bottom));
+}
+```
+
+antd-mobile 컴포넌트는 컴포넌트 CSS 변수로 맞춰요.
 
 ```tsx
-// src/theme/antdTheme.ts
-import { theme, type ThemeConfig } from 'antd';
+<Selector
+  columns={3}
+  showCheckMark={false}
+  style={{
+    '--gap': 'var(--pyeongso-space-2)',
+    '--padding': '8px 12px',
+    '--border-radius': 'var(--adm-radius-s)',
+    '--checked-color': 'var(--adm-color-primary)',
+    '--checked-text-color': '#FFFFFF',
+    '--color': 'var(--pyeongso-surface)',
+  } as React.CSSProperties}
+  options={situationOptions}
+/>
 
-export const antdTheme: ThemeConfig = {
-  algorithm: theme.darkAlgorithm,
-  token: {
-    colorPrimary: '#8B4DFF',
-    colorWarning: '#F2C46B',
-    colorError: '#FF6B6B',
-    colorSuccess: '#9BE08C',
-    colorInfo: '#8B4DFF',
-    colorLink: '#C9B1FF',
+<Button
+  block
+  color="primary"
+  size="large"
+  style={{ '--border-radius': 'var(--adm-radius-m)', height: 'var(--pyeongso-control-height-lg)' } as React.CSSProperties}
+>
+  제보하고 +10 P 받기
+</Button>
+```
 
-    colorBgBase: '#0B0A10',
-    colorBgLayout: '#0B0A10',
-    colorBgContainer: '#1A1921',
-    colorBgElevated: '#221D33',
-    colorBorder: '#2A2833',
-    colorBorderSecondary: '#1F1E26',
+- `Card`는 컴포넌트 CSS 변수가 없어요. `className`으로 배경 `var(--pyeongso-surface)`, 안쪽 여백 `var(--pyeongso-space-4)`, 모서리 `var(--adm-radius-l)`을 줘요.
+- 터치 영역은 최소 44×44px이에요. 36px 칩과 24px 태그를 누를 수 있게 만들 때는 위아래 여백으로 44px를 채워요.
 
-    colorText: '#FFFFFF',
-    colorTextSecondary: '#A09DAA',
-    colorTextTertiary: '#6E6B78',
+## 5. antd-mobile 테마 설정
 
-    fontFamily:
-      "'Pretendard Variable', Pretendard, -apple-system, BlinkMacSystemFont, 'Apple SD Gothic Neo', 'Noto Sans KR', sans-serif",
-    fontSize: 15,
+UI 라이브러리는 [antd-mobile v5](https://mobile.ant.design/)를 써요. 같은 Ant Design 계열이고, 하단 탭바, 상단 바, 칩 선택, 아래에서 올라오는 선택창처럼 이 서비스 화면에 필요한 모바일 컴포넌트가 들어 있어요. 아이콘은 집 모양 아이콘이 있는 `@ant-design/icons`를 써요. 이 패키지는 antd 없이 단독으로 쓸 수 있어요.
 
-    borderRadius: 12,
-    borderRadiusSM: 8,
-    borderRadiusLG: 20,
+```bash
+npm install antd-mobile @ant-design/icons
+```
 
-    controlHeight: 40,
-    controlHeightLG: 50,
-  },
-  components: {
-    Button: {
-      primaryShadow: 'none',
-      fontWeight: 700,
-      defaultBg: '#352C45',
-      defaultBorderColor: 'transparent',
-      defaultColor: '#FFFFFF',
-    },
-    Card: {
-      colorBgContainer: '#1A1921',
-    },
-    Tabs: {
-      itemColor: '#A09DAA',
-      itemSelectedColor: '#C9B1FF',
-      inkBarColor: '#8B4DFF',
-    },
-    Progress: {
-      defaultColor: '#8B4DFF',
-      remainingColor: '#2E2A3A',
-    },
-    Badge: {
-      colorError: '#F0455A',
-    },
-    Input: {
-      colorBgContainer: '#1A1921',
-      colorBorder: 'transparent',
-    },
-    Select: {
-      colorBgContainer: '#1A1921',
-      colorBorder: 'transparent',
-    },
-  },
-};
+antd-mobile은 테마를 CSS 변수로 바꿔요. 다크 테마는 `<html>`에 `data-prefers-color-scheme="dark"`를 붙여서 켜고, 그 위에 우리 색을 덮어써요. 덮어쓰는 선택자는 antd-mobile 다크 테마와 같은 `html[data-prefers-color-scheme='dark']`를 쓰고, antd-mobile CSS보다 나중에 불러와요.
 
-// 상황 색. 컴포넌트에서는 이 표만 참조해요.
+```css
+/* src/theme/theme.css */
+html[data-prefers-color-scheme='dark'] {
+  /* antd-mobile 전역 변수 */
+  --adm-color-primary: #8B4DFF;
+  --adm-color-success: #9BE08C;
+  --adm-color-warning: #F2C46B;
+  --adm-color-danger: #FF6B6B;
+
+  --adm-color-text: #FFFFFF;
+  --adm-color-text-secondary: #A09DAA;
+  --adm-color-weak: #6E6B78;
+  --adm-color-light: #5E5A6E;
+  --adm-color-border: #2A2833;
+  --adm-border-color: #2A2833;
+  --adm-color-box: #1A1921;
+  --adm-color-background: #1A1921;
+  --adm-color-background-body: #0B0A10;
+  --adm-color-fill-content: #1A1921;
+
+  --adm-radius-s: 8px;
+  --adm-radius-m: 12px;
+  --adm-radius-l: 20px;
+
+  --adm-font-family: 'Pretendard Variable', Pretendard, -apple-system, BlinkMacSystemFont,
+    'Apple SD Gothic Neo', 'Noto Sans KR', sans-serif;
+  --adm-font-size-main: 15px;
+
+  /* 우리 서비스 전용 변수 (2장 팔레트) */
+  --pyeongso-bg: #0B0A10;
+  --pyeongso-surface: #1A1921;
+  --pyeongso-surface-brand: #221D33;
+  --pyeongso-surface-brand-strong: #33254D;
+  --pyeongso-surface-muted: #352C45;
+  --pyeongso-primary-text: #C9B1FF;
+  --pyeongso-track: #2E2A3A;
+  --pyeongso-neutral-bar: #5E5A6E;
+  --pyeongso-divider: #1F1E26;
+  --pyeongso-badge: #F0455A;
+}
+
+body {
+  background: var(--pyeongso-bg);
+  color: var(--adm-color-text);
+  font-family: var(--adm-font-family);
+}
+```
+
+```ts
+// src/theme/situation.ts — 상황 색 (2장 표). 컴포넌트에서는 이 객체만 참조해요.
 export const situationColor = {
   ordinary: { accent: '#C9B1FF', bg: '#221D33' },
   construction: { accent: '#F2C46B', bg: '#33291A' },
@@ -211,45 +300,54 @@ export type Situation = keyof typeof situationColor;
 
 ```tsx
 // src/main.tsx
-import { ConfigProvider, App as AntApp } from 'antd';
-import koKR from 'antd/locale/ko_KR';
-import { antdTheme } from './theme/antdTheme';
+import { createRoot } from 'react-dom/client';
+import { ConfigProvider } from 'antd-mobile';
+import koKR from 'antd-mobile/es/locales/ko-KR';
+import './theme/theme.css';
+import App from './App';
 
-<ConfigProvider theme={antdTheme} locale={koKR}>
-  <AntApp>
+document.documentElement.setAttribute('data-prefers-color-scheme', 'dark');
+
+createRoot(document.getElementById('root')!).render(
+  <ConfigProvider locale={koKR}>
     <App />
-  </AntApp>
-</ConfigProvider>;
+  </ConfigProvider>,
+);
 ```
 
-- `message`, `notification`처럼 정적 메서드로 띄우는 컴포넌트에는 `ConfigProvider` 테마가 적용되지 않아요. `App.useApp()`으로 꺼내서 써요.
-- 컴포넌트 안에서 색이 필요하면 하드코딩하지 말고 `theme.useToken()`이나 `situationColor`를 읽어요.
-- 컴포넌트 토큰 이름은 antd 버전마다 조금씩 달라요. 타입 오류가 나면 [테마 문서](https://ant.design/docs/react/customize-theme)와 각 컴포넌트 문서의 "Design Token" 항목을 확인해요.
+- 앱은 항상 다크 테마예요. 시스템 설정에 따라 밝은 테마로 바뀌지 않게 `data-prefers-color-scheme`을 코드에서 고정해요.
+- 컴포넌트 하나의 모양만 바꿀 때는 그 컴포넌트의 CSS 변수를 `style`이나 클래스로 넘겨요. 예: `<ProgressBar style={{ '--fill-color': '...', '--track-color': '...' }} />`
+- 색이 필요하면 하드코딩하지 말고 CSS 변수(`var(--adm-*)`, `var(--pyeongso-*)`)나 `situationColor`를 써요.
+- `Toast`, `Dialog`는 정적 메서드(`Toast.show`)로 띄워도 CSS 변수 테마가 적용돼요.
 
 ## 6. 컴포넌트
 
-### Ant Design 컴포넌트를 그대로 쓰는 것
+### antd-mobile 컴포넌트를 그대로 쓰는 것
 
-| 시안의 요소 | antd 컴포넌트 | 설정 |
+| 시안의 요소 | antd-mobile 컴포넌트 | 설정 |
 |---|---|---|
-| "키로 보기", "이 길로 가기", "제보하고 +10 P 받기" | `Button` | `type="primary"`, CTA는 `size="large" block shape="round"` |
-| "필요 없었어요" | `Button` | 기본형(`defaultBg`가 `surfaceMuted`) |
-| "경로 관리 ›", "변경", "‹ 홈으로" | `Button` | `type="link"` |
-| 헤더의 종 버튼 | `Button` + `Badge` | `shape="circle"`, 안 읽은 알림이 있으면 `Badge dot` |
-| 하단 탭의 알림 개수 | `Badge` | `count={n}` |
-| 경로·비교·입력·대안 카드 | `Card` | `variant="borderless"` (scene 스타일은 테두리 `border`) |
-| 레벨 진행 막대 | `Progress` | `percent`, `showInfo={false}`, 높이 8 |
-| 상황 유형(공사, 지연·혼잡 …) | `Radio.Group` | `optionType="button"`, 3열 그리드 |
-| "어디인가요?" | `Select` | `showSearch`, 역 목록 |
-| "언제 확인했나요?" | `TimePicker` | 기본값은 지금 시각 |
-| "한 줄 설명" | `Input.TextArea` | `maxLength={100}`, `showCount` |
-| 옷장 탭(소품, 의상, 한정판) | `Tabs` | 밑줄 형태 |
-| "샘플 데이터", "새 알림 1", "파업", "재배치 보너스 +30" | `Tag` | 아래 "상태 태그" 규칙 |
-| 제보 완료, 포인트 적립 | `App.useApp().message` | 짧게 표시 |
+| "키로 보기", "이 길로 가기", "제보하고 +10 P 받기" | `Button` | `color="primary"`, CTA는 `size="large" block`, 높이와 모서리는 4장 표 |
+| "필요 없었어요" | `Button` | `fill="solid"`, `--background-color: var(--pyeongso-surface-muted)` |
+| "경로 관리 ›", "변경" | `Button` | `fill="none"`, 글자 `--pyeongso-primary-text` |
+| 알림 상세 상단 "‹ 홈으로" | `NavBar` | `back="홈으로"`, `onBack`, 배경 투명 |
+| 하단 탭 | `TabBar` + `SafeArea` | `safeArea`, 각 탭에 `badge` |
+| 헤더 종 버튼의 빨간 점, 탭 알림 개수 | `Badge` | 점은 `content={Badge.dot}`, 개수는 `content={n}`, `color="var(--pyeongso-badge)"` |
+| 경로·비교·입력·대안 카드 | `Card` | 배경 `--pyeongso-surface`, 모서리 `--adm-radius-l` |
+| 레벨 진행 막대 | `ProgressBar` | `percent`, `--fill-color: var(--adm-color-primary)`, `--track-color: var(--pyeongso-track)`, `--track-width: 8px` |
+| 상황 유형(공사, 지연·혼잡 …) | `Selector` | `columns={3}`, `--checked-color: var(--adm-color-primary)`, `--checked-text-color: #FFFFFF`, `showCheckMark={false}` |
+| "어디인가요?" | `Picker` 또는 `Popup` + `SearchBar` + `List` | 아래에서 올라오는 역 목록 |
+| "언제 확인했나요?" | `DatePicker` | `precision="minute"`, 기본값은 지금 시각 |
+| "한 줄 설명" | `TextArea` | `maxLength={100}`, `showCount` |
+| 제보 입력 묶음 | `Form` | `layout="vertical"`, 라벨은 시안의 섹션 제목 |
+| 옷장 탭(소품, 의상, 한정판) | `Tabs` | `--active-line-color: var(--adm-color-primary)`, `--active-title-color: var(--pyeongso-primary-text)` |
+| "샘플 데이터", "파업", "재배치 보너스 +30" | `Tag` | `color`에 상황 강조색, 아래 "상태 태그" 규칙 |
+| 제보 완료, 포인트 적립 | `Toast` | `Toast.show({ content: '+10 P 적립됐어요' })` |
+| 옷 착용 확인, 레벨 해금 | `Dialog` 또는 `CenterPopup` | 키로를 크게 보여 주는 축하 화면 |
+| 위치·화면 아래 여백 | `SafeArea` | `position="top"`, `position="bottom"` |
 
 ### 직접 만드는 컴포넌트
 
-antd에 없거나 모바일 앱 느낌을 내기 위해 직접 만드는 컴포넌트예요. 내부는 antd 토큰과 `situationColor`를 써요.
+antd-mobile에 없어서 직접 만드는 컴포넌트예요. 내부는 CSS 변수와 `situationColor`를 써요.
 
 **`PageHeader`**
 화면 제목(Title), 선택 부제목(Caption), 오른쪽 액션으로 구성돼요. 오른쪽 액션은 `PointBadge` 또는 종 버튼이에요([10장](#10-팀이-정해야-할-것) 참고).
@@ -317,7 +415,7 @@ antd에 없거나 모바일 앱 느낌을 내기 위해 직접 만드는 컴포�
 // src/components/KiroAvatar.tsx (예시)
 import Kiro from '../../design/animation/kiro-avatar-soft.js';
 import '../../design/animation/kiro-avatar-soft.css';
-import type { Situation } from '../theme/antdTheme';
+import type { Situation } from '../theme/situation';
 
 type Props = {
   state?: Situation;   // ordinary, construction, rain, dust, marathon, strike, congestion
@@ -396,7 +494,7 @@ export function KiroAvatar(props: Props) {
 ### 제보 (`03 · 제보 — 동네를 돕는 미션.png`)
 - 안내 카드(`surfaceBrand`): 제보 보상 설명
 - "어떤 일이 있었나요?"
-- 상황 유형(`Radio.Group`), 장소(`Select`), 시각(`TimePicker`), 한 줄 설명(`TextArea`)
+- 상황 유형(`Selector`), 장소(`Picker`), 시각(`DatePicker`), 한 줄 설명(`TextArea`)를 `Form`으로 묶어요
 - "같은 경로의 2~3명이 확인하면 신뢰도가 올라가요."
 - CTA "제보하고 +10 P 받기"와 포인트 정책 안내(Micro)
 
@@ -424,7 +522,7 @@ export function KiroAvatar(props: Props) {
 - `viewport-fit=cover`와 `env(safe-area-inset-*)`로 노치와 홈 인디케이터 영역을 피해요.
 - 터치 영역은 최소 44×44px이에요.
 - 하단 탭은 화면 아래에 고정하고, 본문 아래에 탭 높이만큼 여백을 둬요.
-- 키로 애니메이션의 트리거, 길이, 이징은 [`animation/NOTES.md`](animation/NOTES.md)를 따라요. UI 요소(카드, 버튼, 탭)는 antd 기본 모션만 쓰고 따로 애니메이션을 넣지 않아요. 예외는 `PushBanner`의 내려오기·올라가기예요.
+- 키로 애니메이션의 트리거, 길이, 이징은 [`animation/NOTES.md`](animation/NOTES.md)를 따라요. UI 요소(카드, 버튼, 탭)는 antd-mobile 기본 모션만 쓰고 따로 애니메이션을 넣지 않아요. 예외는 `PushBanner`의 내려오기·올라가기예요.
 - `prefers-reduced-motion`이면 키로의 반복 움직임(둥실, Zzz)을 꺼요.
 
 ## 10. 팀이 정해야 할 것
@@ -455,6 +553,6 @@ export function KiroAvatar(props: Props) {
 
 - 서비스 기획: [`docs/PLANNING.md`](../docs/PLANNING.md), [`docs/PRD.md`](../docs/PRD.md)
 - 키로 표정과 애니메이션: [`animation/NOTES.md`](animation/NOTES.md)
-- Ant Design 컴포넌트 목록: https://ant.design/components/overview/
-- Ant Design 테마 설정: https://ant.design/docs/react/customize-theme
-- Ant Design 테마 편집기: https://ant.design/theme-editor
+- antd-mobile 컴포넌트 목록: https://mobile.ant.design/components/
+- antd-mobile 테마 설정: https://mobile.ant.design/guide/theming
+- 아이콘: https://ant.design/components/icon/ (`@ant-design/icons`)
