@@ -8,6 +8,7 @@
     "build": "tsc -b && vite build",
     "lint": "oxlint",
     "preview": "vite preview",
+    "verify:build": "npm run build && node ../scripts/verify-build.mjs",
     "test": "vitest run",
     "evaluate": "tsx ../scripts/eval/write.ts"
   },
