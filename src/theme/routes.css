@@ -1,0 +1,67 @@
+.saved-routes-heading { display: flex; justify-content: space-between; align-items: center; gap: var(--pyeongso-space-3); margin-top: var(--pyeongso-space-8); }
+.saved-routes-heading h3 { font-size: 15px; }
+.saved-routes-heading h3 span { margin-left: var(--pyeongso-space-1); color: var(--pyeongso-primary-text); }
+.saved-routes-heading > span { font-size: 11px; color: var(--pyeongso-text-secondary); }
+.saved-route-card { padding: var(--pyeongso-space-5); border: 1px solid var(--pyeongso-border); }
+.saved-route-topline { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: var(--pyeongso-space-2); font-size: 11px; color: var(--pyeongso-text-secondary); }
+.saved-route-index { color: var(--pyeongso-primary-text); letter-spacing: .06em; font-weight: 600; }
+.saved-route-card .saved-route-endpoints { display: flex; align-items: center; gap: var(--pyeongso-space-3); margin-top: var(--pyeongso-space-4); font-size: 22px; line-height: 1.4; letter-spacing: -.04em; }
+.saved-route-endpoints > span:not(.anticon) { min-width: 0; overflow-wrap: anywhere; }
+.saved-route-endpoints > .anticon { flex-shrink: 0; font-size: 16px; color: var(--pyeongso-text-secondary); }
+.saved-route-card .saved-route-via { margin: var(--pyeongso-space-2) 0 0; font-size: 12px; color: var(--pyeongso-text-secondary); overflow-wrap: anywhere; }
+.saved-route-via span { margin-left: var(--pyeongso-space-2); }
+.saved-route-departure { display: flex; align-items: center; gap: var(--pyeongso-space-2); margin-top: var(--pyeongso-space-4); font-size: 12px; color: var(--pyeongso-text-secondary); }
+.saved-route-departure strong { font-size: 15px; font-weight: 600; font-variant-numeric: tabular-nums; color: var(--pyeongso-text); }
+.saved-route-actions { display: flex; align-items: center; justify-content: flex-end; gap: var(--pyeongso-space-2); padding-top: var(--pyeongso-space-2); }
+.saved-route-actions .adm-button { font-size: 12px; --text-color: var(--pyeongso-text-secondary); padding-inline: var(--pyeongso-space-3); }
+.saved-route-actions .adm-button:first-child { --text-color: var(--pyeongso-primary-text); }
+.saved-route-actions .anticon { margin-right: var(--pyeongso-space-1); }
+
+.route-baseline { margin-top: var(--pyeongso-space-5); border-block: 1px solid var(--pyeongso-border); }
+.route-baseline-toggle { display: flex; align-items: center; gap: var(--pyeongso-space-3); min-height: 72px; padding-block: var(--pyeongso-space-4); list-style: none; cursor: pointer; }
+.route-baseline-toggle::-webkit-details-marker, .baseline-ridership > summary::-webkit-details-marker { display: none; }
+.route-baseline-icon { display: grid; place-items: center; flex-shrink: 0; width: 36px; height: 36px; border-radius: var(--adm-radius-m); background: var(--pyeongso-surface-brand); color: var(--pyeongso-primary-text); font-size: 18px; }
+.route-baseline-title { display: flex; flex: 1; flex-direction: column; gap: var(--pyeongso-space-1); min-width: 0; }
+.route-baseline-title strong { font-size: 14px; font-weight: 600; }
+.route-baseline-title > span { font-size: 11px; color: var(--pyeongso-text-secondary); }
+.route-baseline-chevron { font-size: 11px; color: var(--pyeongso-text-secondary); }
+.route-baseline[open] > summary .route-baseline-chevron { transform: rotate(180deg); }
+.route-baseline-content { padding-bottom: var(--pyeongso-space-5); }
+.baseline-day-picker { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--pyeongso-space-1); padding: var(--pyeongso-space-1); margin-bottom: var(--pyeongso-space-6); border-radius: var(--adm-radius-m); background: var(--pyeongso-bg); }
+.baseline-day-picker .adm-button { min-width: 0; padding-inline: var(--pyeongso-space-1); font-size: 13px; --text-color: var(--pyeongso-text-secondary); --border-width: 0; --border-radius: var(--adm-radius-s); }
+.baseline-day-picker .adm-button[aria-pressed=true] { background: var(--pyeongso-surface-brand-strong); --text-color: var(--pyeongso-primary-text); font-weight: 700; }
+.baseline-station-heading { display: flex; align-items: center; justify-content: space-between; gap: var(--pyeongso-space-2); }
+.baseline-eyebrow { font-size: 11px; color: var(--pyeongso-text-secondary); }
+.baseline-station-heading h4 { margin: var(--pyeongso-space-1) 0 0; font-size: 18px; font-weight: 700; }
+.baseline-station-heading h4 span { font-size: 14px; font-weight: 500; }
+.baseline-history-tag { flex-shrink: 0; padding: var(--pyeongso-space-1) var(--pyeongso-space-2); border-radius: var(--adm-radius-s); background: var(--pyeongso-bg); color: var(--pyeongso-text-secondary); font-size: 11px; }
+.route-baseline .baseline-context { margin: var(--pyeongso-space-2) 0 var(--pyeongso-space-5); font-size: 12px; line-height: 1.6; }
+.baseline-congestion h5 { margin: 0 0 var(--pyeongso-space-3); font-size: 13px; font-weight: 600; color: var(--pyeongso-text-secondary); }
+.baseline-metric-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--pyeongso-space-3); }
+.baseline-metric { min-width: 0; padding: var(--pyeongso-space-4); border-radius: var(--adm-radius-m); background: var(--pyeongso-bg); }
+.baseline-metric-label { display: flex; flex-direction: column; gap: var(--pyeongso-space-1); }
+.baseline-metric-label span { font-size: 11px; color: var(--pyeongso-text-secondary); }
+.baseline-metric-label strong { font-size: 13px; font-weight: 500; overflow-wrap: anywhere; }
+.route-baseline .baseline-metric-value { margin: var(--pyeongso-space-3) 0 var(--pyeongso-space-2); font-size: clamp(24px, 8vw, 36px); line-height: 1.2; letter-spacing: -.05em; font-weight: 700; font-variant-numeric: tabular-nums; color: var(--pyeongso-primary-text); overflow-wrap: anywhere; }
+.baseline-metric-value span { font-size: 14px; margin-left: var(--pyeongso-space-1); letter-spacing: 0; font-weight: 400; color: var(--pyeongso-text-secondary); }
+.baseline-metric-time { font-size: 11px; color: var(--pyeongso-text-secondary); font-variant-numeric: tabular-nums; }
+.route-baseline .baseline-source { margin: var(--pyeongso-space-3) 0 0; font-size: 11px; line-height: 1.65; color: var(--pyeongso-text-secondary); }
+.route-baseline .baseline-source + .baseline-source { margin-top: var(--pyeongso-space-1); }
+.baseline-ridership { margin-top: var(--pyeongso-space-5); border-top: 1px solid var(--pyeongso-border); }
+.baseline-ridership > summary { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: var(--pyeongso-space-2); min-height: 52px; padding-block: var(--pyeongso-space-3); list-style: none; cursor: pointer; font-size: 13px; }
+.baseline-ridership > summary > span { display: flex; align-items: center; gap: var(--pyeongso-space-2); }
+.baseline-detail-label { font-size: 11px; color: var(--pyeongso-text-secondary); }
+.baseline-ridership[open] > summary .baseline-detail-label .anticon { transform: rotate(180deg); }
+.baseline-ridership-row { display: flex; justify-content: space-between; gap: var(--pyeongso-space-3); padding-block: var(--pyeongso-space-3); border-bottom: 1px solid var(--pyeongso-border); }
+.baseline-ridership-row > div { min-width: 0; display: flex; flex-direction: column; gap: var(--pyeongso-space-1); }
+.baseline-ridership-row strong { font-size: 13px; font-weight: 600; }
+.baseline-ridership-row span { font-size: 11px; color: var(--pyeongso-text-secondary); overflow-wrap: anywhere; }
+.baseline-ridership-number { text-align: right; }
+.baseline-ridership-number strong { font-size: 18px; font-variant-numeric: tabular-nums; }
+.baseline-ridership-number strong span { margin-left: var(--pyeongso-space-1); font-size: 11px; font-weight: 400; }
+.baseline-disclaimer { display: flex; gap: var(--pyeongso-space-2); padding-top: var(--pyeongso-space-4); align-items: flex-start; color: var(--pyeongso-text-secondary); }
+.baseline-disclaimer > .anticon { margin-top: var(--pyeongso-space-1); font-size: 12px; flex-shrink: 0; }
+.route-baseline .baseline-disclaimer p { margin: 0; font-size: 11px; line-height: 1.6; }
+.baseline-disclaimer p span { display: block; margin-top: var(--pyeongso-space-1); font-size: 11px; }
+.route-baseline .baseline-message { padding-block: var(--pyeongso-space-5); text-align: center; font-size: 13px; }
+.baseline-message > span:not(.anticon) { display: block; font-size: 11px; color: var(--pyeongso-text-secondary); }

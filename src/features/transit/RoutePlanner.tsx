@@ -5,9 +5,10 @@ import type { Place, TransitJourney } from './types';
 import { searchJourneys, searchPlaces } from './client';
 import { journeyStops, routeError } from '../routes/route';
 import { JourneyDetail, JourneySummary } from './JourneyDetail';
+import { KakaoMap } from '@/components/KakaoMap';
 
-function PlaceField({ label, value, onChange }: { label: string; value?: Place; onChange: (place?: Place) => void }) {
-  const [query, setQuery] = useState(value?.name ?? '');
+function PlaceField({ label, value, initialQuery = '', onChange }: { label: string; value?: Place; initialQuery?: string; onChange: (place?: Place) => void }) {
+  const [query, setQuery] = useState(value?.name ?? initialQuery);
   const [results, setResults] = useState<Place[]>([]);
   const [message, setMessage] = useState('');
   const [busy, setBusy] = useState(false);
@@ -73,8 +74,10 @@ export function RoutePlanner({ initial, onSave, onManual }: { initial?: Route; o
   }
   return <section className="route-planner" aria-label="대중교통 경로 찾기">
     <p className="caption">① 장소 선택 → ② 이동 경로 확인 → ③ 내 경로로 저장</p>
-    <PlaceField label="출발지" value={origin} onChange={place => changeEndpoint(place, 'origin')} />
-    <PlaceField label="도착지" value={destination} onChange={place => changeEndpoint(place, 'destination')} />
+    {initial && !initial.journey && <p className="caption">등록한 출발·도착지를 검색해 정확한 장소를 선택해 주세요. 저장하면 기존 경로가 선택한 이동 구간으로 바뀌어요.</p>}
+    <PlaceField label="출발지" value={origin} initialQuery={initial?.stops[0]} onChange={place => changeEndpoint(place, 'origin')} />
+    <PlaceField label="도착지" value={destination} initialQuery={initial?.stops.at(-1)} onChange={place => changeEndpoint(place, 'destination')} />
+    {!selected && <KakaoMap markers={[...(origin ? [{ ...origin, label: `출발: ${origin.name}` }] : []), ...(destination ? [{ ...destination, label: `도착: ${destination.name}` }] : [])]} />}
     <Button block type="button" color="primary" disabled={!origin || !destination} loading={busy} onClick={() => void search()}>대중교통 경로 찾기</Button>
     <p className="caption">카카오 장소 검색 · ODsay 대중교통 길찾기</p>
     {error && <p role="alert">{error}</p>}

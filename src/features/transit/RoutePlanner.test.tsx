@@ -20,6 +20,22 @@ async function pickPlaces(user: ReturnType<typeof userEvent.setup>) {
   await user.type(screen.getByLabelText('도착지'), '선릉'); await user.click(screen.getByRole('button', { name: '도착지 검색' })); await user.click(await screen.findByRole('button', { name: /선릉역.*서울 강남구/ }));
 }
 describe('actual route UI contract', () => {
+  it('keeps selected places visible on the map when transit lookup fails', async () => {
+    const user = userEvent.setup(); render(<RoutePlanner onSave={vi.fn()} onManual={vi.fn()} />);
+    await pickPlaces(user);
+    expect(screen.getByText('지도 영역')).toBeTruthy();
+    vi.mocked(searchJourneys).mockRejectedValue(new Error('길찾기 연결 실패'));
+    await user.click(screen.getByRole('button', { name: '대중교통 경로 찾기' }));
+    expect(await screen.findByRole('alert')).toHaveProperty('textContent', '길찾기 연결 실패');
+    expect(screen.getByText('지도 영역')).toBeTruthy();
+    expect(screen.queryByRole('button', { name: '이 경로 저장' })).toBeNull();
+  });
+  it('prefills manual route endpoints without inventing selected coordinates', () => {
+    render(<RoutePlanner initial={{ id: 'manual', district: '강남구', stops: ['신논현', '강남', '역삼', '선릉'], departAt: '09:00', days: ['weekday'] }} onSave={vi.fn()} onManual={vi.fn()} />);
+    expect(screen.getByLabelText('출발지')).toHaveProperty('value', '신논현');
+    expect(screen.getByLabelText('도착지')).toHaveProperty('value', '선릉');
+    expect(screen.getByRole('button', { name: '대중교통 경로 찾기' })).toHaveProperty('disabled', true);
+  });
   it('selects places, displays API route units and saves the journey with notification schedule', async () => {
     const user = userEvent.setup(); const onSave = vi.fn(); render(<RoutePlanner onSave={onSave} onManual={vi.fn()} />);
     await pickPlaces(user);

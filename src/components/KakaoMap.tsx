@@ -24,12 +24,12 @@ async function loadSdk(): Promise<MapsApi> {
   sdkPromise = (async () => {
     const configured = import.meta.env.VITE_KAKAO_JS_KEY;
     const key = configured || (await requestJson<{ javascriptKey: string | null }>('/api/map-config')).javascriptKey;
-    if (!key) throw new Error('지도 연결을 준비하고 있어요. 아래 이동 구간으로 경로를 확인해 주세요.');
+    if (!key) throw new Error('지도 연결 설정이 없어 표시할 수 없어요. 앱 관리자에게 문의해 주세요.');
     return await new Promise<MapsApi>((resolve, reject) => {
       const script = document.createElement('script');
       script.dataset.jamjamMap = 'true';
       let settled = false;
-      const fail = () => { if (settled) return; settled = true; clearTimeout(timer); script.remove(); reject(new Error('지도를 불러오지 못했어요. 아래 이동 구간은 계속 확인할 수 있어요.')); };
+      const fail = () => { if (settled) return; settled = true; clearTimeout(timer); script.remove(); reject(new Error('지도를 불러오지 못했어요. 네트워크 연결이나 지도 서비스의 접속 주소 설정을 확인해 주세요.')); };
       const timer = setTimeout(fail, 12000);
       script.src = `https://dapi.kakao.com/v2/maps/sdk.js?appkey=${encodeURIComponent(key)}&autoload=false`;
       script.async = true;
@@ -86,6 +86,6 @@ export function KakaoMap({ markers, path = [], pathKind = 'stops', height = 260 
   return <div className="transit-map-wrap">
     <div ref={ref} className="transit-map" style={{ height }} aria-label="선택한 경로의 카카오 지도" />
     {status && <div className="transit-map-status" role="status"><p>{status}</p>{failed && <button type="button" onClick={() => setAttempt(n => n + 1)}>지도 다시 불러오기</button>}</div>}
-    {!status && <p className="caption">{pathKind === 'geometry' ? '카카오맵 · ODsay 이동 경로' : '카카오맵 · 점선은 경유지 연결이며 실제 도로 모양과 달라요.'}</p>}
+    {!status && <p className="caption">{path.length < 2 ? '카카오맵 · 선택한 장소의 위치예요. 이동 경로는 길찾기 후 표시해요.' : pathKind === 'geometry' ? '카카오맵 · ODsay 이동 경로' : '카카오맵 · 점선은 경유지 연결이며 실제 도로 모양과 달라요.'}</p>}
   </div>;
 }
