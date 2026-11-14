@@ -90,6 +90,7 @@ test('invalid input and method fail before upstream call', async () => {
   }
 });
 test('only public JS key can leave map configuration, unrelated routes remain untouched', async () => {
+  assert.deepEqual(mapConfig({ VITE_ODSAY_WEB_KEY: 'uri-public', ODSAY_API_KEY: 'server-private', KAKAO_REST_API_KEY: 'rest-private' }), { javascriptKey: null, odsayWebKey: 'uri-public' });
   assert.deepEqual(mapConfig({ NEXT_PUBLIC_KAKAO_JS_KEY: 'public', KAKAO_REST_API_KEY: 'private', ODSAY_API_KEY: 'private' }), { javascriptKey: 'public' });
   assert.deepEqual(mapConfig({}), { javascriptKey: null });
   const res = response();

@@ -10,7 +10,7 @@
 
 **개발 기록:** [BUILD_REPORT.md](BUILD_REPORT.md)
 
-> 2026-11-14 `main`의 `e27d828` 배포가 완료되었습니다. 공개 주소를 390px 브라우저에서 열어 홈·키로·현재 지역 신호 표시를 확인했고, 강남역 `/api/live`의 정상 응답을 확인했습니다. 카카오·ODsay 실제 길찾기는 제공자 인증 설정이 남아 있습니다. 상세 검증은 [개발 기록](BUILD_REPORT.md)을 따릅니다.
+> 2026-11-14 `main`의 `e27d828` 배포가 완료되었습니다. 공개 주소를 390px 브라우저에서 열어 홈·키로·현재 지역 신호 표시를 확인했고, 강남역 `/api/live`의 정상 응답을 확인했습니다. 당시 카카오·ODsay 실제 길찾기는 제공자 인증 설정이 남아 있었습니다. 이후 ODsay Web/URI 전환 설정은 아래 외부 API 설정을 따르며, 실서비스 성공 여부는 별도 검증합니다. 상세 검증은 [개발 기록](BUILD_REPORT.md)을 따릅니다.
 
 ## 1. 문제 정의
 
@@ -31,7 +31,7 @@
 | 기능 | 사용자에게 보이는 동작 | 구현 위치 / 상태 |
 |---|---|---|
 | 경로 관리 | 출발·도착·경유지, 출발 시각과 이동 요일을 저장·수정 | `src/pages/Routes.tsx`, 브라우저 저장 구현 |
-| 카카오맵 + ODsay | 실제 장소를 선택하고 대중교통 후보·지도·구간을 확인해 저장 | `src/features/transit/`, `api/`, 화면·서버 구현 / 제공자 인증 설정 필요 |
+| 카카오맵 + ODsay | 실제 장소를 선택하고 대중교통 후보·지도·구간을 확인해 저장 | `src/features/transit/`, `api/`, Web/URI 전환, localhost 실제 경로 5개 확인 / 새 공개 배포 검증 중 |
 | 실제 공공데이터 기준선 | 과거 혼잡도·승하차·대기질의 단위와 기간을 구분해 조회 | `scripts/collect/`, `src/features/baseline/`, 원본 10개 정제·조회 구현 |
 | 현재 지역 신호 | 강남역·여의도의 서울시 도시데이터와 관측 시각 확인 | 홈 연결, 실제 API 응답 확인 |
 | 이상 판정 | 편차 × 경로 겹침 × 시간 겹침이 임계값 이상일 때 앱 내 알림 생성 | `src/engine/`, 합성 시나리오로 검증 |
@@ -94,14 +94,26 @@ React + TypeScript + Vite, antd-mobile v5를 사용합니다. 앱은 `src/`, 공
 |---|---|---|
 | `VITE_KAKAO_JS_KEY` | 카카오 지도 SDK | 가능, 허용 도메인 설정 필요 |
 | `KAKAO_REST_API_KEY` | 카카오 장소 검색 | 금지, 서버 전용 |
-| `ODSAY_API_KEY` | 대중교통 경로 조회 | 금지, 서버 전용 |
+| `VITE_ODSAY_WEB_KEY` | ODsay Web/URI 대중교통 경로 조회 | 가능, 허용 도메인 설정 필요 |
+| `ODSAY_API_KEY` | Web 키 미설정 시 서버 대중교통 경로 조회 | 금지, Server 플랫폼 전용 |
 | `SEOUL_DATA_API_KEY` | 서울시 도시데이터·TOPIS | 금지, 서버 전용 |
 | `SEOUL_SUBWAY_REALTIME_API_KEY` | 지하철 실시간 도착 | 금지, 서버 전용 |
 | `PUBLIC_DATA_API_KEY` | 공공데이터포털 서비스 | 금지, 서버 전용 |
 
-기존 로컬 `NEXT_PUBLIC_KAKAO_JS_KEY`와 `NEXT_PUBLIC_KAKAO_REST_API_KEY`는 서버 호환 입력으로 처리합니다. REST 키를 `VITE_` 변수로 옮기지 않습니다. `/api/map-config`는 지도 JavaScript 키만 반환합니다. 실제 값은 `.env`와 Vercel 환경변수에만 저장하고 커밋하지 않습니다.
+기존 로컬 `NEXT_PUBLIC_KAKAO_JS_KEY`와 `NEXT_PUBLIC_KAKAO_REST_API_KEY`는 서버 호환 입력으로 처리합니다. REST 키를 `VITE_` 변수로 옮기지 않습니다. `/api/map-config`는 지도 JavaScript 키와 명시적으로 설정한 ODsay Web 키(`odsayWebKey`)만 반환하며, `ODSAY_API_KEY`를 대신 공개하지 않습니다. 실제 값은 `.env`와 Vercel 환경변수에만 저장하고 커밋하지 않습니다.
 
-Vercel의 Root Directory는 저장소 루트(`.`), 출력 폴더는 `src/dist`입니다. 새 환경변수와 제공자 허용 도메인은 배포 설정에서 별도로 적용해야 합니다. 현재 키로 확인한 결과 카카오 장소 검색은 서비스 비활성(403), 지도 SDK는 등록되지 않은 도메인(401), ODsay는 키 인증 오류였습니다. 카카오 서비스 활성화와 개발·배포 도메인 등록, ODsay 키 유형·허용 서버 설정을 완료해야 실제 경로 조회가 가능합니다. 키 미설정·인증 실패·할당량 초과를 실제 결과처럼 표시하지 않습니다.
+Vercel의 Root Directory는 저장소 루트(`.`), 출력 폴더는 `src/dist`입니다. 새 환경변수와 제공자 허용 도메인은 배포 설정에서 별도로 적용해야 합니다. 키 미설정·인증 실패·할당량 초과를 실제 결과처럼 표시하지 않습니다.
+
+**ODsay Web/URI 설정**
+
+1. ODsay LAB의 내 애플리케이션 → 설정에서 URI 플랫폼에 `kirothon-team-019.vercel.app`을 등록합니다. 로컬 검증은 `localhost:5174`도 등록합니다.
+2. 해당 앱의 Web/URI 플랫폼 키를 `VITE_ODSAY_WEB_KEY`에 넣습니다. Server 플랫폼 키와 혼용하지 않습니다.
+3. Vercel 프로젝트 → Settings → Environment Variables에서 같은 이름으로 **Production**에 저장한 뒤 재배포합니다. 로컬에서는 `src/.env.local`에 설정합니다.
+4. 배포 도메인에서 장소 검색 → 경로 조회 → 지도·구간 표시 → 저장을 확인합니다. URI 등록과 키 저장만으로 실제 호출 성공을 판정하지 않습니다.
+
+Web 키가 설정되면 브라우저가 ODsay에 직접 요청하며 등록 도메인으로 인증합니다. Web 키가 없으면 `/api/transit` 서버 경로를 사용하고, 이때 `ODSAY_API_KEY`에는 Server 키와 실제 발신 IP 허용 설정이 필요합니다. Web 인증 실패 시 서버 키를 브라우저로 전달하지 않습니다. 공식 설정 안내는 [ODsay 가이드](https://lab.odsay.com/guide/guide?platform=web)를 따릅니다.
+
+2026-11-14 초기 배포 검증에서는 카카오 장소 검색 서비스 비활성(403), 지도 SDK 도메인 미등록(401), ODsay 키 인증 오류를 확인했습니다. 당시 실패 기록과 이후 검증 결과는 [개발 기록](BUILD_REPORT.md)에서 구분합니다.
 
 ## 7. 데이터와 한계
 

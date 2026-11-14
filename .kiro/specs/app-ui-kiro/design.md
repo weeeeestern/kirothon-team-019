@@ -103,7 +103,8 @@ interface DayResult {
 ## 2026-11-14 통합 변경
 
 - `src/features/transit/`는 장소 선택, 경로 후보, 텍스트 구간과 지도 상태를 담당한다.
-- `api/`와 서버 모듈은 카카오 REST/ODsay 키를 브라우저에 보내지 않고 중계한다. `/api/map-config`만 공개 가능한 지도 JS키를 반환한다.
+- 카카오 장소 검색은 `api/` 서버 모듈이 REST 키를 비공개로 유지하며 중계한다. ODsay는 `VITE_ODSAY_WEB_KEY`가 있으면 브라우저에서 Web/URI 도메인 인증으로 직접 호출하고, 없으면 `/api/transit`을 사용한다.
+- `/api/map-config`는 카카오 지도 JS 키와 명시적으로 설정된 ODsay Web 키(`odsayWebKey`)만 반환한다. `ODSAY_API_KEY`는 Server 키로 계속 비공개이며 Web 키의 대체 공개값으로 사용하지 않는다.
 - 선택 경로의 실제 좌표와 구간 정보를 저장한다. 지도 로딩·인증 실패에도 수동 등록과 텍스트 안내는 유지한다.
 - `src/features/baseline/`는 과거 공공데이터를 조회한다. 현재 지역 신호와 합성 엔진 결과는 별도 카드·출처로 구분한다.
 - 실제 현재 열차 혼잡도 미확보 시 과거 평균과 임의 현재값을 연결해 실제 편차를 계산하지 않는다.
