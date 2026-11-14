@@ -1,3 +1,4 @@
+import { sampleGeneratedAt } from '@/data/provenance';
 import { useEffect } from 'react';
 import { Button, Tag, Toast } from 'antd-mobile';
 import { useApp } from '@/state/AppState';
@@ -16,7 +17,7 @@ function NoticeCard({ notice }: { notice: Notice }) {
     <p className="caption">{notice.unit === '%' ? '혼잡도 비교' : '영향 신호 비교 · 시연용 지수 (실측 아님)'}</p>
     {[{ label: '평소', value: notice.baselineValue }, { label: '오늘', value: notice.currentValue }].map((r, i) => <div className="comparison-row" key={r.label}><span>{r.label}</span><div className="comparison-track"><div style={{ width: `${r.value / max * 100}%`, background: i ? t.accent : 'var(--pyeongso-neutral-bar)' }} /></div><strong>{Math.round(r.value)}{notice.unit}</strong></div>)}
     <section className="action-box" style={{ background: t.bg }}><p className="caption">이렇게 준비해요</p><strong>{notice.action}</strong></section>
-    <p className="caption">{notice.reason}<br />{notice.learning ? '기준선을 학습 중이에요' : '안정된 기준선이에요'}<br />{notice.source === 'report' ? `시민 제보 · 확인 시뮬레이션 · ${report ? new Date(report.createdAt).toLocaleString('ko-KR', { timeZone: 'Asia/Seoul' }) : '시각 미상'} KST` : '샘플 데이터 · 수집 2026.11.14 09:00 KST · 11.16 평일 시연'}</p>
+    <p className="caption">{notice.reason}<br />{notice.learning ? '기준선을 학습 중이에요' : '안정된 기준선이에요'}<br />{notice.source === 'report' ? `시민 제보 · 확인 시뮬레이션 · ${report ? new Date(report.createdAt).toLocaleString('ko-KR', { timeZone: 'Asia/Seoul' }) : '시각 미상'} KST` : `샘플 데이터 · 생성 ${sampleGeneratedAt} · 11.16 평일 시연`}</p>
     <div className="feedback-box"><p>이 알림이 도움이 되었나요?</p>{fed ? <p className="purple" role="status">피드백 반영됐어요 · +1 P</p> : <div className="row"><Button color="primary" size="small" onClick={() => feedback('helpful')}>도움이 됐어요</Button><Button size="small" onClick={() => feedback('notNeeded')}>필요 없었어요</Button></div>}</div>
   </article>;
 }

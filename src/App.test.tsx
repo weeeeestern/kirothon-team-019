@@ -34,6 +34,7 @@ describe('the complete local demo', () => {
     await user.click(screen.getByRole('option', { name: '마라톤', exact: true })); await user.type(screen.getByLabelText('장소'), '강남');
     await user.type(screen.getByLabelText(/한 줄 설명/), '행사로 역 앞이 혼잡해요'); await user.click(screen.getByRole('button', { name: '제보하고 +10 P 받기' }));
     await waitFor(() => expect(saved().reports).toHaveLength(1)); expect(saved().ledger[0].amount).toBe(10);
+    expect(await screen.findByText('새 옷이 열렸어요!')).toBeTruthy(); await waitFor(() => expect(getComputedStyle(screen.getByRole('button', { name: '계속하기' })).pointerEvents).not.toBe('none')); await user.click(screen.getByRole('button', { name: '계속하기' }));
     await user.click(screen.getByRole('button', { name: '이웃 A 확인' })); expect(screen.getByText('검증 대기')).toBeTruthy();
     await user.click(screen.getByRole('button', { name: '이웃 B 확인' })); expect(screen.getByText('확인됨')).toBeTruthy();
     await user.click(screen.getByRole('button', { name: '이웃 A 도움됨 +5 P' }));
@@ -47,10 +48,38 @@ describe('the complete local demo', () => {
     await user.click(await screen.findByRole('button', { name: '새 경로 등록' }));
     await waitFor(() => expect(getComputedStyle(screen.getByLabelText('출발역')).pointerEvents).not.toBe('none'));
     await user.type(screen.getByLabelText('출발역'), '강남'); await user.type(screen.getByLabelText('도착역'), '삼성');
+    await user.click(screen.getByRole('button', { name: '경유지 추가' }));
+    await user.type(screen.getByLabelText('경유지 1'), '역삼');
     fireEvent.change(screen.getByLabelText('출발 시각'), { target: { value: '09:15' } });
     await user.click(screen.getByRole('button', { name: '경로 저장' }));
-    await waitFor(() => expect(saved().routes).toHaveLength(3)); expect(saved().routes.at(-1)?.departAt).toBe('09:15');
-    app.unmount(); render(<App />); expect(await screen.findByRole('heading', { name: '강남 → 삼성' })).toBeTruthy();
+    await waitFor(() => expect(saved().routes).toHaveLength(3)); expect(saved().routes.at(-1)?.departAt).toBe('09:15'); expect(saved().routes.at(-1)?.stops).toEqual(['강남', '역삼', '삼성']);
+    app.unmount(); render(<App />); expect(await screen.findByRole('heading', { name: '강남 → 역삼 → 삼성' })).toBeTruthy();
+  });
+  it('announces a level unlock once and wears the new outfit on home', async () => {
+    const seed = initialStore(); seed.ledger = [{ id: 'seed', amount: 10, reason: '이전 제보' }];
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(seed));
+    const user = userEvent.setup(); const app = render(<App />); await navigate('제보', user);
+    await user.click(screen.getByRole('option', { name: '혼잡', exact: true }));
+    await user.type(screen.getByLabelText('장소'), '강남');
+    await user.click(screen.getByRole('button', { name: '제보하고 +10 P 받기' }));
+    expect(await screen.findByText('Lv. 2, 함께 자랐어요!')).toBeTruthy();
+    await waitFor(() => expect(getComputedStyle(screen.getByRole('button', { name: '옷장으로 가기' })).pointerEvents).not.toBe('none'));
+    await user.click(screen.getByRole('button', { name: '옷장으로 가기' }));
+    await user.click(await screen.findByRole('button', { name: '안전모 보유' }));
+    await waitFor(() => expect(saved().outfit).toBe('hardhat'));
+    await navigate('오늘', user);
+    expect(document.querySelector('.hero .kiro-avatar')?.innerHTML).toContain('hardhat');
+    app.unmount(); render(<App />);
+    expect(screen.queryByText('Lv. 2, 함께 자랐어요!')).toBeNull();
+  });
+  it('offers route registration without showing a false quiet-day score when routes are empty', async () => {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify({ ...initialStore(), routes: [] }));
+    const user = userEvent.setup(); render(<App />);
+    expect(screen.getByText('아직 살펴볼 경로가 없어요')).toBeTruthy();
+    expect(screen.queryByText('알림을 쉬고 있어요')).toBeNull();
+    await navigate('제보', user);
+    await user.click(screen.getByRole('button', { name: '경로 등록하기' }));
+    expect(await screen.findByRole('button', { name: '새 경로 등록' })).toBeTruthy();
   });
   it('recovers corrupted saved data and renders the evaluation', async () => {
     localStorage.setItem(STORAGE_KEY, '{broken'); const user = userEvent.setup(); render(<App />);

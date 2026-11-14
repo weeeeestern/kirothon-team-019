@@ -1,9 +1,10 @@
 {
   "meta": {
     "source": "synthetic",
-    "collectedAt": "2026-11-14T00:00:00Z",
+    "collectedAt": null,
     "mode": "synthetic",
-    "note": "검증된 실데이터 번들이 없어 합성 시나리오를 사용해요. API 승인 여부와는 별개예요."
+    "note": "검증된 실데이터 번들이 없어 합성 시나리오를 사용해요. API 승인 여부와는 별개예요.",
+    "generatedAt": "2026-11-14T00:00:00Z"
   },
   "items": [
     {

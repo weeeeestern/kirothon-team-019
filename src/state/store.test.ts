@@ -7,6 +7,14 @@ const now = '2026-11-16T08:00:00+09:00';
 const report: CitizenReport = { id: 'rep', author: 'me', routeId: 'r1', situation: 'marathon', place: '강남', time: '08:00', note: '통제 중이에요', createdAt: now, confirmations: [], helpfulUsers: [] };
 describe('durable citizen reports and rewards', () => {
   it('rejects malformed storage but preserves valid empty routes', () => { for (const raw of ['{broken', 'null', '{"version":1}', JSON.stringify({ ...initialStore(), reports: [null] })]) expect(restoreStore(raw)).toEqual(initialStore()); const s = { ...initialStore(), routes: [] }; expect(restoreStore(JSON.stringify(s)).routes).toEqual([]); });
+  it('validates normalized stops and keeps edited route ordering', () => {
+    const s = initialStore();
+    expect(reducer(s, { type: 'route', route: { ...s.routes[0], stops: ['강남', ' 강남역 '] } })).toBe(s);
+    expect(reducer(s, { type: 'route', route: { ...s.routes[0], stops: ['강남', '', '선릉'] } })).toBe(s);
+    const changed = reducer(s, { type: 'route', route: { ...s.routes[0], stops: [' 강남 ', '역삼', '선릉'], departAt: '09:00' } });
+    expect(changed.routes.map(r => r.id)).toEqual(s.routes.map(r => r.id));
+    expect(restoreStore(JSON.stringify(changed)).routes[0].stops).toEqual(['강남', '역삼', '선릉']);
+  });
   it('requires all fields and limits notes to 100 characters', () => { const s = initialStore(); expect(reducer(s, { type: 'report', report: { ...report, time: '' }, now })).toBe(s); expect(reducer(s, { type: 'report', report: { ...report, note: 'a'.repeat(101) }, now })).toBe(s); });
   it('awards a report once, grants a same-day limited outfit and preserves it tomorrow', () => { let s = reducer(initialStore(), { type: 'report', report, now }); s = reducer(s, { type: 'report', report, now }); expect(totalPoints(s.ledger)).toBe(10); expect(canWear(s, 'marathon26')).toBe(true); expect(canWear(restoreStore(JSON.stringify(s)), 'marathon26')).toBe(true); expect(toAnomaly(report, new Date('2026-11-17T00:00:00+09:00'))).toBeNull(); });
   it('requires two different same-route non-author confirmations', () => { let r = confirmReport(report, 'me', 'r1', new Date(now)); expect(r).toBe(report); r = confirmReport(r, 'a', 'wrong-route', new Date(now)); expect(r).toBe(report); r = confirmReport(r, 'a', 'r1', new Date(now)); r = confirmReport(r, 'a', 'r1', new Date(now)); expect(isConfirmed(r)).toBe(false); expect(toAnomaly(r, new Date(now))).toBeNull(); r = confirmReport(r, 'b', 'r1', new Date(now)); expect(isConfirmed(r)).toBe(true); expect(toAnomaly(r, new Date(now))?.source).toBe('report'); });

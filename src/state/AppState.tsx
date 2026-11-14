@@ -1,18 +1,18 @@
-import { createContext, useContext, useState, useMemo, useReducer, useEffect, useRef } from 'react';
-import type { ReactNode, Dispatch } from 'react';
+import { useState, useMemo, useReducer, useEffect, useRef } from 'react';
+import type { ReactNode } from 'react';
 import { runDay } from '@/engine';
 import type { Anomaly, EngineResult, Situation } from '@/engine';
 import { toAnomaly } from '@/features/reports/reportStore';
 import { totalPoints } from '@/features/points/ledger';
 import { dayKey } from '@/engine/utils';
 import { initialStore, restoreStore, reducer, STORAGE_KEY } from './store';
-import type { Store, Action } from './store';
 import anomaliesRaw from '@/data/synthetic/anomalies.json';
 
-export type DemoMode = 'quiet' | 'congestion' | 'construction' | 'rain' | 'dust' | 'marathon' | 'strike';
-interface AppCtx { store: Store; dispatch: Dispatch<Action>; result: EngineResult; points: number; mode: DemoMode; setMode: (v: DemoMode) => void; now: Date; day: Date; storageError: boolean; unread: number; celebration: string; celebrate: (v: string) => void }
-const Ctx = createContext<AppCtx | null>(null);
-export function useApp(): AppCtx { const c = useContext(Ctx); if (!c) throw new Error('useApp outside AppState'); return c; }
+import { Ctx } from './context';
+import type { DemoMode } from './context';
+export { useApp } from './context';
+export type { DemoMode } from './context';
+
 export function AppState({ children }: { children: ReactNode }) {
   const [store, dispatch] = useReducer(reducer, undefined, () => { try { return restoreStore(localStorage.getItem(STORAGE_KEY)); } catch { return initialStore(); } });
   const [storageError, setStorageError] = useState(false);

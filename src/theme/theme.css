@@ -1,4 +1,4 @@
-:root {
+html:root[data-prefers-color-scheme='dark'] {
   --pyeongso-bg: #0B0A10;
   --pyeongso-surface: #1A1921;
   --pyeongso-surface-brand: #221D33;
@@ -35,7 +35,7 @@ html, body { margin: 0; background: var(--pyeongso-bg); color: var(--pyeongso-te
 
 #root { max-width: 480px; margin: 0 auto; min-height: 100dvh; position: relative; }
 
-:root {
+html:root[data-prefers-color-scheme='dark'] {
   color-scheme: dark;
   --pyeongso-space-1: 4px; --pyeongso-space-2: 8px; --pyeongso-space-3: 12px; --pyeongso-space-4: 16px;
   --pyeongso-space-5: 20px; --pyeongso-space-6: 24px; --pyeongso-space-8: 32px; --pyeongso-space-10: 40px;
@@ -97,3 +97,10 @@ fieldset { border: 0; padding: 0; margin: 0 0 var(--pyeongso-space-6); } legend 
 .nav-icon { display: block; font-size: 24px; line-height: 28px; padding-inline: var(--pyeongso-space-3); border-radius: var(--adm-radius-s); }
 .nav-button.active { color: var(--pyeongso-primary-text); }
 .nav-button.active .nav-icon { background: var(--pyeongso-surface-brand); }
+
+.route-stop-row { display: flex; align-items: center; gap: var(--pyeongso-space-2); }
+.route-stop-row .field { flex: 1; min-width: 0; }
+.route-form { padding-bottom: calc(var(--pyeongso-space-6) + env(safe-area-inset-bottom)); max-width: 480px; margin-inline: auto; }
+.unlock-content { text-align: center; }
+.unlock-content p { margin-top: var(--pyeongso-space-3); }
+.route-pill > span:first-child, .card h3 { overflow-wrap: anywhere; }
