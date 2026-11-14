@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8"/>
+<title>키로 소프트 애니메이션</title>
+<link rel="stylesheet" href="kiro-avatar-soft.css"/>
+<style>
+
+    
+    @font-face { font-family: "Gothic A1"; src: url("../fonts/GothicA1-Regular.ttf") format("truetype"); font-weight: 400; font-display: swap; }
+    @font-face { font-family: "Gothic A1"; src: url("../fonts/GothicA1-Medium.ttf") format("truetype"); font-weight: 500; font-display: swap; }
+    @font-face { font-family: "Gothic A1"; src: url("../fonts/GothicA1-SemiBold.ttf") format("truetype"); font-weight: 600; font-display: swap; }
+    @font-face { font-family: "Gothic A1"; src: url("../fonts/GothicA1-Bold.ttf") format("truetype"); font-weight: 700; font-display: swap; }
+    @font-face { font-family: "Gothic A1"; src: url("../fonts/GothicA1-ExtraBold.ttf") format("truetype"); font-weight: 800; font-display: swap; }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body {
+      background: #0A0810;
+      color: #FAFAFA;
+      font-family: "Gothic A1", "Noto Sans CJK KR", sans-serif;
+      -webkit-font-smoothing: antialiased;
+    }
+    h1 { font-size: 40px; font-weight: 800; letter-spacing: -0.05em; }
+    .lead { color: #A1A1AA; margin: 8px 0 36px; font-size: 16px; }
+    .sec { font-size: 13px; letter-spacing: 0.14em; text-transform: uppercase; color: #C6A0FF; font-weight: 700; margin: 28px 0 14px; }
+    .lab { margin-top: 8px; font-size: 14px; font-weight: 700; }
+    .sub { font-size: 11px; color: #7A7484; margin-top: 2px; line-height: 1.4; }
+    .limtag { display: inline-block; margin-top: 6px; background: #F6D56A; color: #3A2A10; font-size: 10px; font-weight: 800; padding: 2px 6px; border-radius: 6px; }
+
+body {
+  background: radial-gradient(ellipse 900px 500px at 80% 0%, rgba(165,123,255,0.2), transparent 50%), #0A0810;
+}
+#stage { padding: 40px 48px 36px; width: 1600px; }
+h1 { font-size: 32px; }
+.lead { margin-bottom: 28px; font-size: 14px; }
+#grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 18px 16px; }
+.cell { text-align: center; }
+.lab { font-size: 14px; }
+.sub { font-size: 11px; color: #8A8494; }
+
+    /* loop one-shots for the 12s showcase */
+    .kiro-motion-hat .kiro-hat { animation-iteration-count: infinite; animation-duration: 2.2s; }
+    .kiro-motion-hat .kiro-prop { animation-iteration-count: infinite; animation-duration: 2.2s; }
+    .kiro-motion-nudge { animation-iteration-count: infinite; animation-duration: 2.6s; }
+    .kiro-motion-sleepin .kiro-eyes-awake { animation: kiro-fadeout-loop 3.8s var(--kiro-ease) infinite; }
+    .kiro-motion-sleepin .kiro-eyes-asleep { animation: kiro-fadein-loop 3.8s var(--kiro-ease) infinite; }
+    .kiro-motion-sleepin .kiro-zzz { animation: kiro-fadein-loop 3.8s 0.2s var(--kiro-ease) infinite; }
+    .kiro-motion-sleepin .kiro-tile { animation: kiro-dim-loop 3.8s var(--kiro-ease) infinite; }
+    @keyframes kiro-fadeout-loop {
+      0%, 12% { opacity: 1; } 40%, 62% { opacity: 0; } 88%, 100% { opacity: 1; }
+    }
+    @keyframes kiro-fadein-loop {
+      0%, 12% { opacity: 0; } 40%, 62% { opacity: 1; } 88%, 100% { opacity: 0; }
+    }
+    @keyframes kiro-dim-loop {
+      0%, 12% { filter: brightness(1); } 40%, 62% { filter: brightness(0.82); } 88%, 100% { filter: brightness(1); }
+    }
+
+</style>
+</head>
+<body>
+<section id="stage">
+  <h1>키로 애니메이션 · 부드럽게</h1>
+  <p class="lead">스프링·ease-in-out만 쓰고, 딱 끊기는 움직임은 빼 두었어요. 공식 실루엣은 그대로입니다.</p>
+  <div id="grid"></div>
+</section>
+<script src="kiro-avatar-soft.js"></script>
+<script>
+const CELLS = [
+  { title:"둥실", sub:"홈 대기 · 4.8초", motion:"float", state:"ordinary" },
+  { title:"느린 깜빡임", sub:"깨어 있는 얼굴 · 6.4초", motion:"blink", expression:"joy" },
+  { title:"Zzz", sub:"평범 졸음 · 4.2초", motion:"float", expression:"sleepy" },
+  { title:"하품", sub:"밤늦게 열었을 때 · 2.8초", motion:"yawn", expression:"yawn" },
+  { title:"모자 톡 착용", sub:"공사 알림 · 1.05초", motion:"hat", state:"construction" },
+  { title:"살짝 흔들림", sub:"이상 감지 · 1.2초", motion:"nudge", state:"strike" },
+  { title:"반짝 + 하트", sub:"옷 획득 · 1.6초", motion:"unlock", expression:"heart" },
+  { title:"폴짝", sub:"제보 성공 · 1.15초", motion:"hop", expression:"proud" },
+  { title:"밤 잠들기", sub:"밤 11시 이후 · 2.4초", motion:"sleepin", expression:"sleep" },
+  { title:"아침 기지개", sub:"첫 실행 · 1.9초", motion:"stretch", expression:"cheer" },
+];
+document.getElementById("grid").innerHTML = CELLS.map(c => {
+  const opts = { size: 220, motion: c.motion };
+  if (c.expression) opts.expression = c.expression;
+  if (c.state) opts.state = c.state;
+  return `<div class="cell">${KiroAvatar.render(opts)}
+    <div class="lab">${c.title}</div><div class="sub">${c.sub}</div></div>`;
+}).join("");
+</script>
+</body>
+</html>

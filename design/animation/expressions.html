@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8"/>
+<title>키로 표정 세트</title>
+<link rel="stylesheet" href="kiro-avatar-soft.css"/>
+<style>
+
+    
+    @font-face { font-family: "Gothic A1"; src: url("../fonts/GothicA1-Regular.ttf") format("truetype"); font-weight: 400; font-display: swap; }
+    @font-face { font-family: "Gothic A1"; src: url("../fonts/GothicA1-Medium.ttf") format("truetype"); font-weight: 500; font-display: swap; }
+    @font-face { font-family: "Gothic A1"; src: url("../fonts/GothicA1-SemiBold.ttf") format("truetype"); font-weight: 600; font-display: swap; }
+    @font-face { font-family: "Gothic A1"; src: url("../fonts/GothicA1-Bold.ttf") format("truetype"); font-weight: 700; font-display: swap; }
+    @font-face { font-family: "Gothic A1"; src: url("../fonts/GothicA1-ExtraBold.ttf") format("truetype"); font-weight: 800; font-display: swap; }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body {
+      background: #0A0810;
+      color: #FAFAFA;
+      font-family: "Gothic A1", "Noto Sans CJK KR", sans-serif;
+      -webkit-font-smoothing: antialiased;
+    }
+    h1 { font-size: 40px; font-weight: 800; letter-spacing: -0.05em; }
+    .lead { color: #A1A1AA; margin: 8px 0 36px; font-size: 16px; }
+    .sec { font-size: 13px; letter-spacing: 0.14em; text-transform: uppercase; color: #C6A0FF; font-weight: 700; margin: 28px 0 14px; }
+    .lab { margin-top: 8px; font-size: 14px; font-weight: 700; }
+    .sub { font-size: 11px; color: #7A7484; margin-top: 2px; line-height: 1.4; }
+    .limtag { display: inline-block; margin-top: 6px; background: #F6D56A; color: #3A2A10; font-size: 10px; font-weight: 800; padding: 2px 6px; border-radius: 6px; }
+
+#sheet { padding: 56px 64px 64px;
+  background: radial-gradient(ellipse 900px 500px at 80% 0%, rgba(165,123,255,0.22), transparent 50%), #0A0810; }
+#grid { display: grid; grid-template-columns: repeat(6, 1fr); gap: 28px 16px; }
+.item { text-align: center; }
+.moment { font-size: 12px; color: #A1A1AA; margin-top: 4px; line-height: 1.45; min-height: 2.8em; }
+</style>
+</head>
+<body>
+<section id="sheet">
+  <h1>키로 표정</h1>
+  <p class="lead">공식 눈 글리프(KiroCrew)만 바꿔 쓰는 12가지 표정입니다. 몸 모양과 눈 위치는 그대로예요.</p>
+  <div id="grid"></div>
+</section>
+<script src="kiro-avatar-soft.js"></script>
+<script>
+const order = ["sleepy","joy","wink","heart","sparkle","surprise","worry","yawn","proud","sulk","cheer","sleep"];
+document.getElementById("grid").innerHTML = order.map(k => {
+  const e = KiroAvatar.EXPRESSIONS[k];
+  return `<div class="item">${KiroAvatar.render({expression:k,size:200,motion:"idle"})}
+    <div class="lab">${e.label}</div>
+    <div class="moment">${e.moment}</div></div>`;
+}).join("");
+</script>
+</body>
+</html>
