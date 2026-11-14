@@ -29,10 +29,15 @@
 - 이 방식은 사용자가 매번 "오늘이 평소와 다른가"를 스스로 판단해야 합니다.
 
 ### 근거
-- 평소와 비교할 수 있는 공공데이터가 실제로 있습니다.
+'평소'와 '오늘'을 비교할 수 있는 데이터가 실제로 있습니다.
+
+- **평소(과거 공공데이터)**
   - [서울교통공사 혼잡도 정보](https://data.seoul.go.kr/dataList/OA-12928/S/1/datasetView.do): 요일·시간대·구간별 과거 혼잡도
-  - [역별 일별 시간대별 승하차 인원](https://www.data.go.kr/data/15048032/fileData.do): 2025년 199,290행
-  - [서울시 실시간 도시데이터](https://data.seoul.go.kr/dataList/OA-21285/F/1/datasetView.do): 지역의 현재 인구·교통·날씨·대기질
+  - [역별 일별 시간대별 승하차 인원](https://www.data.go.kr/data/15048032/fileData.do): 2025년 전체 역의 일별 승하차 기록
+  - [에어코리아 과거 측정 자료](https://www.airkorea.or.kr/web/last_amb_hour_data?pMENU_NO=123): 서울 측정소의 시간별 미세먼지
+- **오늘(실시간 API)**
+  - [서울시 실시간 도시데이터](https://data.seoul.go.kr/dataList/OA-21285/F/1/datasetView.do): 지역의 현재 인구 혼잡, 날씨, 대기질, 도로 통제 정보
+  - 카카오 장소 검색·지도, ODsay 대중교통 길찾기: 내 경로 등록과 대안 경로 조회
 
 ### 목표
 평범한 날에는 알림이 오지 않고, 내 길과 시간에 영향이 있는 변화가 있는 날에만 "무엇이 달라졌는지, 평소와 얼마나 다른지, 어떻게 하면 좋은지"를 알려주는 것입니다.
@@ -43,13 +48,13 @@
 
 | 기능 | 해결하는 불편 | 코드 위치 |
 |---|---|---|
-| 내 경로 등록 (장소, 이동 경로, 출발 시간, 요일) | 매일 같은 길을 다니는데도 이동 경로를 반복해서 검색해야 한다. | `src/pages/Routes.tsx`, `src/features/transit/`, `api/` |
+| 내 경로 등록 (장소, 이동 경로, 출발 시간, 요일) | 매일 같은 길을 다니는데도 이동 경로를 반복해서 검색해야 한다. | `src/pages/Routes.tsx`, `src/features/transit/`, `api/places.js`, `api/transit.js` |
 | 평소와의 비교 | 오늘 길 상황을 알아도 평소보다 심각한 건지 판단하기 어렵다. | `scripts/collect/`, `src/features/baseline/` |
 | 내 경로·시간에 맞는 알림 | 나와 상관없는 교통 알림이 많아 정작 필요한 정보를 놓치기 쉽다. | `src/engine/` |
 | 이유가 보이는 알림 (변화, 비교, 권장 행동, 출처) | 길에 문제가 생겼다는 사실을 알아도 얼마나 일찍 출발해야 할지, 어떻게 대처해야 할지 막막하다. | `src/pages/NoticeDetail.tsx` |
 | 대안 경로 추천 | 평소 다니던 길에 문제가 생기면 막히는 구간을 피해 갈 다른 길을 직접 찾아야 한다. | `src/features/transit/recommendation.ts`, `src/features/transit/RoutingAdvice.tsx` |
 | 알림 피드백 | 나에게 중요하지 않은 알림이 반복되어도 필요한 알림만 받도록 조정하기 어렵다. | `src/state/`, `src/engine/threshold.ts` |
-| 현재 지역 신호 (강남역, 여의도) | 지금 주변의 날씨, 미세먼지, 인파 같은 상황이 평소와 어떤지 따로 찾아봐야 한다. | `src/pages/Home.tsx`, `api/` |
+| 현재 지역 신호 (강남역, 여의도) | 지금 주변의 날씨, 미세먼지, 인파, 도로 통제 같은 상황을 따로 찾아봐야 한다. | `src/components/LiveConditions.tsx`, `server/live.mjs` |
 | 이웃 제보와 포인트 | 집이나 회사 근처의 갑작스러운 공사·혼잡처럼 공공데이터에 없는 상황은 미리 알기 어렵다. | `src/features/reports/`, `src/features/points/` |
 | 키로와 오늘 평범도 | 알림이 없는 날, 정말 아무 문제가 없는 건지 알기 어렵다. | `src/pages/Home.tsx`, `src/pages/KiroRoom.tsx` |
 
