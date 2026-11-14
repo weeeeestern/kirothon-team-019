@@ -51,7 +51,10 @@
           "**/*.key",
           "**/*.pem"
         ],
-        "effect": "deny"
+        "effect": "deny",
+        "exclude": [
+          "**/.env.example"
+        ]
       },
       {
         "capability": "shell",

@@ -13,3 +13,9 @@ export function routeError(route: Route): string | null {
   if (!Array.isArray(route.days) || !route.days.length || route.days.some(d => !['weekday', 'weekend', 'holiday', 'afterHoliday'].includes(d))) return '이동 요일을 선택해 주세요.';
   return null;
 }
+
+/** 서버에 보내는 경로 키 `<자치구>:<출발>-<도착>`. 경유지와 출발 시각은 보내지 않는다. 1~80자. */
+export function routeKey(route: Route): string {
+  const first = normalizeStop(route.stops[0] ?? ''); const last = normalizeStop(route.stops.at(-1) ?? '');
+  return `${route.district.trim()}:${first}-${last}`.slice(0, 80);
+}

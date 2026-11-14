@@ -4,22 +4,41 @@ import { useApp } from '@/state/AppState';
 import { PageHeader } from '@/components/PageHeader';
 import { KiroAvatar } from '@/components/KiroAvatar';
 import { REPORT_TYPES, isConfirmed, validReportInput } from '@/features/reports/reportStore';
-import type { ReportType } from '@/features/reports/reportStore';
+import type { ReportType, CitizenReport } from '@/features/reports/reportStore';
+import { reportsApi } from '@/api';
+import { routeKey } from '@/features/routes/route';
 import { situationColor } from '@/theme/situation';
 import { dayKey } from '@/engine/utils';
 import type { Page } from '@/App';
 export function Report({ navigate }: { navigate: (page: Page) => void }) {
-  const { store, dispatch, now, celebration, celebrate, result } = useApp();
+  const { store, dispatch, now, celebration, celebrate, result, remote, call, refresh } = useApp();
+  const [helped, setHelped] = useState<Set<string>>(() => new Set());
   const [situation, setSituation] = useState<ReportType | undefined>();
   const [routeId, setRouteId] = useState(store.routes[0]?.id ?? '');
   const route = store.routes.find(r => r.id === routeId);
   const [place, setPlace] = useState(''); const [time, setTime] = useState('08:00'); const [note, setNote] = useState(''); const [error, setError] = useState('');
-  function submit() {
+  async function submit() {
     const input = { routeId, situation: situation!, place: place.trim(), time, note: note.trim() };
     if (!situation || !validReportInput(input) || !route) { setError('상황, 경로, 장소, 시각을 모두 입력해 주세요.'); return; }
     if (!route.stops.some(s => s.replace(/역$/, '') === place.trim().replace(/역$/, ''))) { setError('선택한 경로에 있는 역이나 정류장을 입력해 주세요.'); return; }
-    dispatch({ type: 'report', report: { ...input, id: crypto.randomUUID(), author: 'me', createdAt: now.toISOString(), confirmations: [], helpfulUsers: [] }, now: now.toISOString() });
+    let id: string = crypto.randomUUID();
+    if (remote) {
+      const saved = await call(() => reportsApi.submitReport({ routeKey: routeKey(route), situation, place: input.place, time, note: input.note }));
+      if (!saved) return;
+      id = saved.id;
+    }
+    dispatch({ type: 'report', report: { ...input, id, author: 'me', createdAt: now.toISOString(), confirmations: [], helpfulUsers: [] }, now: now.toISOString() });
     setSituation(undefined); setPlace(''); setNote(''); setError(''); celebrate('proud'); Toast.show('제보를 등록했어요. +10 P 적립했어요');
+    void refresh();
+  }
+  async function confirm(r: CitizenReport) {
+    const route = store.routes.find(x => x.id === r.routeId); if (!route) return;
+    if (await call(() => reportsApi.confirmReport(r.id, routeKey(route)))) { Toast.show('확인을 남겼어요'); void refresh(); }
+  }
+  async function helpful(r: CitizenReport) {
+    const done = await call(() => reportsApi.markHelpful(r.id));
+    if (done === undefined) return;
+    setHelped(h => new Set(h).add(r.id)); Toast.show(done ? '제보자에게 도움됨을 전했어요' : '이미 도움됨을 눌렀어요'); void refresh();
   }
   return <div className="page"><PageHeader title="동네를 돕는 한마디" subtitle="내가 본 작은 변화가, 이웃의 여유가 돼요" />
     {celebration === 'proud' && <div className="mini-celebration"><KiroAvatar size={120} expression="proud" motion="hop" /><span>고마워요! +10 P</span></div>}
@@ -30,14 +49,15 @@ export function Report({ navigate }: { navigate: (page: Page) => void }) {
       <label className="field">발생 시각<input type="time" value={time} onChange={e => setTime(e.target.value)} /></label>
       <label className="field">한 줄 설명<textarea value={note} maxLength={100} rows={3} onChange={e => setNote(e.target.value)} placeholder="어떤 상황인지 간단히 알려주세요" /><span className="counter">{note.length} / 100</span></label>
       {error && <p role="alert">{error}</p>}<Button block type="submit" color="primary" disabled={!store.routes.length}>제보하고 +10 P 받기</Button>
-      <p className="caption">같은 경로의 서로 다른 이웃 2명이 확인하면 신뢰도가 올라가요. 실제 다중 사용자 대신 아래 시연 버튼을 사용해요.</p>
+      <p className="caption">같은 경로의 서로 다른 이웃 2명이 확인하면 신뢰도가 올라가요. {remote ? '이웃의 제보는 아래에서 확인할 수 있어요.' : '실제 다중 사용자 대신 아래 시연 버튼을 사용해요.'}</p>
     </form>}
     <h3 className="section-title">내가 전한 소식 <span className="purple">{store.reports.length}</span></h3>
     {!store.reports.length && <div className="card"><p>아직 제보가 없어요. 첫 소식을 전해 보세요.</p></div>}
     {store.reports.map(r => { const expired = dayKey(new Date(r.createdAt)) !== dayKey(now); const confirmed = isConfirmed(r); const routeExists = store.routes.some(route => route.id === r.routeId); const sent = result.notices.some(n => n.anomalyId === r.id); return <article className="card" key={r.id}>
       <div className="row between"><strong>{r.place} · {situationColor(r.situation).label}</strong><Tag color={confirmed ? 'success' : 'default'}>{expired ? '만료' : confirmed ? '확인됨' : '검증 대기'}</Tag></div><p>{r.note || '한 줄 설명 없이 등록했어요.'}</p><p className="caption">{r.time} · 확인 {r.confirmations.length}/2명 · {dayKey(new Date(r.createdAt))}</p>
       {!routeExists && <p className="caption">삭제된 경로의 제보예요. 기록과 적립 포인트는 남아 있어요.</p>}
-      {!expired && routeExists && <div className="simulation"><p className="caption">같은 경로 이웃 · 시뮬레이션</p><div className="row">{['이웃 A', '이웃 B'].map(user => <Button size="small" key={user} disabled={r.confirmations.includes(user)} onClick={() => { dispatch({ type: 'confirm', id: r.id, user, routeId: r.routeId, now: now.toISOString() }); Toast.show('이웃의 확인을 반영했어요'); }}>{user} 확인</Button>)}</div>
+      {!expired && routeExists && remote && r.author !== 'me' && <div className="simulation"><p className="caption">같은 경로 이웃의 제보</p><div className="row"><Button size="small" onClick={() => void confirm(r)}>같은 경로예요 · 확인</Button>{confirmed && <Button size="small" disabled={helped.has(r.id)} onClick={() => void helpful(r)}>{helped.has(r.id) ? '도움됨 반영됨' : '도움이 됐어요'}</Button>}</div></div>}
+      {!expired && routeExists && !remote && <div className="simulation"><p className="caption">같은 경로 이웃 · 시뮬레이션</p><div className="row">{['이웃 A', '이웃 B'].map(user => <Button size="small" key={user} disabled={r.confirmations.includes(user)} onClick={() => { dispatch({ type: 'confirm', id: r.id, user, routeId: r.routeId, now: now.toISOString() }); Toast.show('이웃의 확인을 반영했어요'); }}>{user} 확인</Button>)}</div>
         {confirmed && <><p className="caption">{sent ? '내 경로에 영향이 있어 알림을 만들었어요.' : '신뢰도는 확인됐어요. 오늘의 경로·시각·영향도 조건을 만족할 때 알림을 만들어요.'}</p>{sent && <Button size="small" disabled={r.helpfulUsers.includes('이웃 A')} onClick={() => { dispatch({ type: 'helpful', id: r.id, user: '이웃 A', routeId: r.routeId, now: now.toISOString() }); celebrate('proud'); Toast.show('이웃에게 도움이 됐어요. +5 P'); }}>이웃 A 도움됨 {r.helpfulUsers.includes('이웃 A') ? '반영됨' : '+5 P'}</Button>}</>}
       </div>}
     </article>; })}

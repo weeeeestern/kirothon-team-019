@@ -2,16 +2,22 @@ import { sampleGeneratedAt } from '@/data/provenance';
 import { useEffect } from 'react';
 import { Button, Tag, Toast } from 'antd-mobile';
 import { useApp } from '@/state/AppState';
+import { reportsApi } from '@/api';
 import { situationColor } from '@/theme/situation';
 import { PageHeader } from '@/components/PageHeader';
 import { KiroAvatar } from '@/components/KiroAvatar';
 import type { Notice } from '@/engine';
 function NoticeCard({ notice }: { notice: Notice }) {
-  const { store, dispatch, celebrate } = useApp(); const t = situationColor(notice.situation); const fed = Object.hasOwn(store.feedback, notice.id);
+  const { store, dispatch, celebrate, remote, call, refresh } = useApp(); const t = situationColor(notice.situation); const fed = Object.hasOwn(store.feedback, notice.id);
   const max = Math.max(notice.baselineValue, notice.currentValue, 1);
   const report = store.reports.find(r => r.id === notice.anomalyId);
   const route = store.routes.find(r => r.id === notice.routeId);
-  function feedback(value: 'helpful' | 'notNeeded') { if (fed) return; dispatch({ type: 'feedback', id: notice.id, value }); celebrate('joy'); Toast.show('피드백 고마워요. +1 P 적립했어요'); }
+  async function feedback(value: 'helpful' | 'notNeeded') {
+    if (fed) return;
+    if (remote && (await call(() => reportsApi.recordFeedback(notice.id))) === undefined) return;
+    dispatch({ type: 'feedback', id: notice.id, value }); celebrate('joy'); Toast.show('피드백 고마워요. +1 P 적립했어요');
+    void refresh();
+  }
   return <article className="card notice-card"><div className="row between"><Tag style={{ '--background-color': t.bg, '--text-color': t.accent, '--border-color': 'transparent' }}>{t.label}</Tag><span className="caption">{notice.deliverAt} 알림 예정</span></div>
     <p className="caption">{route?.stops[0]} → {route?.stops.at(-1)} · {route?.departAt}</p><h2>{notice.what}</h2><p className="comparison-head" style={{ color: t.accent }}>{notice.delta}</p>
     <p className="caption">{notice.unit === '%' ? '혼잡도 비교' : '영향 신호 비교 · 시연용 지수 (실측 아님)'}</p>

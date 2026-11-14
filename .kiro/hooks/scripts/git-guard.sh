@@ -41,7 +41,7 @@ if printf '%s\n' "$files" | grep -Eq '(^|/)\.env($|\.)|\.pem$|\.key$'; then
 fi
 
 added="$(printf '%s\n' "$diff_text" | grep -E '^\+' | grep -Ev '^\+\+\+')"
-if printf '%s\n' "$added" | grep -Eq 'service_role|eyJ[A-Za-z0-9_-]{20,}\.[A-Za-z0-9_-]{20,}|sk-[A-Za-z0-9]{20,}|(serviceKey|apiKey|API_KEY)[\"'"'"' ]*[:=][\"'"'"' ]*[A-Za-z0-9%+/=]{16,}'; then
+if printf '%s\n' "$added" | grep -Eq 'SERVICE_ROLE_KEY["'"'"' ]*[:=]["'"'"' ]*[A-Za-z0-9._-]{20,}|sb_secret_[A-Za-z0-9_-]{16,}|eyJ[A-Za-z0-9_-]{20,}\.[A-Za-z0-9_-]{20,}|sk-[A-Za-z0-9]{20,}|(serviceKey|apiKey|API_KEY)[\"'"'"' ]*[:=][\"'"'"' ]*[A-Za-z0-9%+/=]{16,}'; then
   echo "차단: 추가된 줄에 키처럼 보이는 문자열이 있어요. 값은 .env나 Supabase 시크릿으로 옮겨 주세요." >&2
   exit 2
 fi

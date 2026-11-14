@@ -30,5 +30,6 @@
 
 ## 진행 상태
 - [11-14] 완료: app-ui-kiro 작업 13 (lead → ui-dev → qa PASS, 커밋 9d7cdd5)
-- [11-14] 진행 중: supabase-backend 작업 1~5는 서브에이전트가 작성(미커밋), 작업 6(qa 연결 검증과 전체 검토)부터 다시 시작해야 함. 7(Edge Function)은 보류
-- [11-14] 남은 일: 6 완료 → security 검사 → 커밋·푸시 → BUILD_REPORT.md에 위임 근거 기록
+- [11-14] 완료: supabase-backend 작업 1~6 (lead → backend-dev·ui-dev·qa, qa 재검토 1회, security SECURE). 확인: vitest 66개, pgTAP 47개, 빌드 성공
+- [11-14] 보류: 작업 7(Edge Function). security medium 2건(mark_helpful 경로 검사, 제보·피드백 횟수 제한)은 후속 작업 (qa/reports/2026-11-14-security.md)
+- [11-14] main 머지는 사용자 검토 후에만 한다 — 사용자 요청

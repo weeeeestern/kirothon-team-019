@@ -43,7 +43,11 @@ export type Action =
   | { type: 'report'; report: CitizenReport; now: string }
   | { type: 'confirm' | 'helpful'; id: string; user: string; routeId: string; now: string }
   | { type: 'read'; ids: string[] }
-  | { type: 'wear'; id: string };
+  | { type: 'wear'; id: string }
+  | { type: 'syncLedger'; entries: PointEntry[] }
+  | { type: 'syncRemote'; items: Array<{ routeId: string; report: RemoteReport }>; now: string };
+/** 서버 제보 한 건(remote 모드). 확인한 사용자 ID는 받지 않고 수만 받는다. */
+export interface RemoteReport { id: string; situation: CitizenReport['situation']; place: string; time: string; note: string; confirmations: number; isMine: boolean }
 export function reducer(s: Store, a: Action): Store {
   switch (a.type) {
     case 'route': {
@@ -65,6 +69,22 @@ export function reducer(s: Store, a: Action): Store {
       return { ...s, reports: s.reports.map(r => r.id === a.id ? { ...r, helpfulUsers: [...r.helpfulUsers, a.user] } : r), ledger: award(s.ledger, { id: `helpful:${a.id}:${a.user}`, amount: 5, reason: '이웃에게 도움된 제보' }) };
     }
     case 'read': return { ...s, read: [...new Set([...s.read, ...a.ids])] };
+    case 'syncLedger': {
+      // remote 모드: 서버 원장이 기준이다.
+      const entries = a.entries.reduce<PointEntry[]>((acc, e) => award(acc, e), []);
+      return { ...s, ledger: entries };
+    }
+    case 'syncRemote': {
+      let reports = s.reports;
+      for (const { routeId, report: x } of a.items) {
+        if (!s.routes.some(r => r.id === routeId)) continue;
+        const confirmations = Array.from({ length: Math.max(0, Math.floor(x.confirmations) || 0) }, (_, i) => `remote-${i + 1}`);
+        if (reports.some(r => r.id === x.id)) { reports = reports.map(r => r.id === x.id ? { ...r, confirmations } : r); continue; }
+        const report: CitizenReport = { id: x.id, author: x.isMine ? 'me' : 'remote-author', routeId, situation: x.situation, place: x.place, time: x.time, note: x.note, createdAt: a.now, confirmations, helpfulUsers: [] };
+        if (validReportInput(report)) reports = [report, ...reports];
+      }
+      return reports === s.reports ? s : { ...s, reports };
+    }
     case 'wear': return canWear(s, a.id) ? { ...s, outfit: a.id } : s;
   }
 }
